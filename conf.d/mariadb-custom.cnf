@@ -1,7 +1,0 @@
-# Custom Maria DB Config to autoextend tablespace and tmp data file
-
-[mysqld]
-# InnoDB options
-innodb_data_file_path           = ibdata1:12M:autoextend:max:5G
-innodb_temp_data_file_path      = ibtmp1:12M:autoextend:max:5G
-innodb_file_per_table           = on

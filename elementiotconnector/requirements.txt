@@ -1,5 +1,0 @@
-requests
-websocket-client
-sqlalchemy
-sqlalchemy_utils
-PyMySQL

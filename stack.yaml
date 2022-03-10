@@ -10,7 +10,6 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - ${MYSQL_DB_FILE}:/var/lib/mysql
-      - ${MYSQL_DB_CNF}:/etc/mysql/conf.d
     networks:
       - ${APP_NETWORK:-appnet}
 

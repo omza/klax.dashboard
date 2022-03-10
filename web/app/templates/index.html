@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ super() }}
+{% if not title %}Speed-o-Mat{% endif %}
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+crossorigin=""/>
+
+<style>
+    /* Set the size of the div element that contains the map */
+    #map {
+    /*height: 100vh;*/
+    width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block backbutton%}
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<div class="row">
+
+    <!-- Speedomat Speed -->
+    <div class="col-lg-6">
+        <!-- Bar Chart -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Anzahl Autos</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:30vh;">
+                    <canvas id="DashboardChartCarCount"></canvas>
+                </div>
+                <hr>
+                Anzahl der gemessenen Autos der Speed-O-Maten in den <code>letzten 30 Tagen</code>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Speedomat Car Count -->
+    <div class="col-lg-6">
+        <!-- Bar Chart -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Geschwindigkeiten</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:30vh;">
+                    <canvas id="DashboardChartSpeed"></canvas>
+                </div>
+                <hr>
+                Durchschnittsgeschwindigkeiten der Speed-O-Maten in den <code>letzten 30 Tagen</code>.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- map -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Kartenansicht</h6>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="embed-responsive embed-responsive-1by1">
+            <div class="embed-responsive-item" id="map"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- About Speed O Mat-->
+
+    <!-- Collapsable Card Example -->
+    <div class="card shadow mb-4">
+        <!-- Card Header - Accordion -->
+        <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+            <h6 class="m-0 font-weight-bold text-primary">Über Speed-O-Mat</h6>
+        </a>
+        <!-- Card Content - Collapse -->
+        <div class="collapse show" id="collapseCardExample">
+            <div class="card-body">
+                <p><b>Speed–O–mat</b> ist eine IoT-Anwendung für die Verkehrsüberwachung mit Geschwindigkeitsdaten.</p>
+                <p>Sie können Speedfreaks, Sensoren für die Datenaufnahme, an relevante Verkehrspositionen (z.B. in Schulnähe oder schlecht einsehbare Kreuzungen) montieren.
+                Diese senden dann gemessene Geschwindigkeit mit einem Zeitstempel per Gateway an die <b>Speed–O–mat-App</b> und gleicht die Daten mit den von Ihnen festgesetzten Einstellungen ab.
+                In der App können Sie dann einen genauen Einblick in die Verkehrsituation ihrer gewünschten Position bekommen.</p>
+                <p>Nutzen Sie die gewonnenen Daten der Speedfreaks um Maßnahmen zur Verkehrsberuhigung zu planen und anschließend ebenfalls zu überprüfen.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <!-- Speadfreaks connected -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Speedfreaks (angebunden)</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="speedfreaks_count">{{ data.speedfreak_active + ' von ' + data.speedfreak_count }}</div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-car-crash fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <!-- Online Experience -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Speedfreaks (Verfügbarkeit)</div>
+                <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="speedfreaks_availabiliy">{{ data.availability + ' %' }}</div>
+                </div>
+                <div class="col">
+                    <div class="progress progress-sm mr-2">
+                    <div class="progress-bar bg-info" role="progressbar" style="width:{{ data.availability }}%" aria-valuenow="{{ data.availability }}" aria-valuemin="0" aria-valuemax="100" id="speedfreaks_availabiliy_bar"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-satellite-dish fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Fahrzeuge (Counter)</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="car_count">{{ data.car_count }}</div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-receipt fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- Page level plugins -->
+ <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+   crossorigin=""></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="{{ url_for('static', filename='js/chart-functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart-carcount-stacked.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart-speed.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+
+        //init Leaflet Map
+        var map = L.map('map').setView([0, 0], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var mypoints = [];
+
+{% for speedfreak in speedfreaks %}
+  {% if speedfreak.active and speedfreak.location_longitude != 0 and speedfreak.location_longitude != 0 %}
+
+        mypoints.push([{{ speedfreak.location_latitude }}, {{ speedfreak.location_longitude }}])
+        L.marker([{{ speedfreak.location_latitude }}, {{ speedfreak.location_longitude }}]).addTo(map)
+            .bindPopup('<b>{{ speedfreak.name }} ({{ speedfreak.speedlimit }} km/h)</b> <p>{{ speedfreak.location_display_name }}</p>');
+
+  {% endif %}
+{% endfor %}
+        var mybounds = new L.LatLngBounds(mypoints);
+        map.fitBounds(mybounds);
+
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
+        if (map.tap) map.tap.disable();
+        document.getElementById('map').style.cursor='default';
+
+        // Update Chart Speed Avg
+        fetch("{{ url_for('chart_speedavg_month', speedfreak_id=None) }}")
+            .then((response) => response.json()) // Transform the data into json
+                .then(function(data) {
+                    const ctx = document.getElementById("DashboardChartSpeed");
+                    const myChart = drawSpeedAvgChart(ctx, data);
+            })
+
+        // Update Chart Cars Count
+        fetch("{{ url_for('chart_cars_month', speedfreak_id=None) }}")
+        .then((response) => response.json()) // Transform the data into json
+            .then(function(data) {
+                const ctx = document.getElementById("DashboardChartCarCount");
+                const myChart = drawCarsCountChart(ctx, data, false);
+        })
+    });
+</script>
+{% endblock %}

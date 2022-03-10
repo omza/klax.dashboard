@@ -1,0 +1,33 @@
+{% macro render_field(field) %}
+<div class="form-group">
+    {{ field(class_="form-control form-control-user", **kwargs)|safe }}
+    <!-- Error Messages-->
+    {% for error in field.errors %}
+    <small class="form-text text-danger">{{ error }}</small>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro render_checkbox(field) %}
+<div class="custom-control custom-checkbox mb-3">
+    {{ field(class_="custom-control-input", **kwargs)|safe }}
+    <label class="custom-control-label" for="{{ field.name }}">{{ field.label.text }}</label>
+
+    <!-- Error Messages-->
+    {% for error in field.errors %}
+    <small class="form-text text-danger">{{ error }}</small>
+    {% endfor %} 
+</div>
+{% endmacro %}
+
+{% macro render_field_label(field) %}
+<div class="form-group">
+    <label for="{{ field.name }}" class="col-form-label-sm">{{ field.label.text }}</label>    
+    {{ field(class_="form-control", **kwargs)|safe }}
+
+    <!-- Error Messages-->
+    {% for error in field.errors %}
+    <small class="form-text text-danger">{{ error }}</small>
+    {% endfor %}
+</div>
+{% endmacro %}

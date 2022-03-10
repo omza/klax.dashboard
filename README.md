@@ -1,3 +1,3 @@
-# Smart-Environment-Demo
+# Klax-Dashboard
 
-Use Case Demo for P&amp;S! Smart Environment Sensors
+Use Case Demo for Klax Meter Data

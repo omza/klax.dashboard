@@ -12,48 +12,7 @@ services:
       - ${MYSQL_DB_FILE}:/var/lib/mysql
       - ${MYSQL_DB_CNF}:/etc/mysql/conf.d
     networks:
-      - ${APP_NETWORK:-smartenv}
-
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: always
-    ports:
-      - "9001:8080"
-    environment:
-      ADMINER_DEFAULT_SERVER: db
-      ADMINER_DESIGN: galkaev
-    networks:
-      - ${APP_NETWORK:-smartenv}
-    depends_on:
-      - db
-      #- proxy
-
-  elementiotconnector:
-    build:
-      context: ./elementiotconnector
-    image: elementiotconnector:local
-    container_name: elementiotconnector
-    restart: always
-    environment:
-      ELEMENTIOT_API_KEY: ${ELEMENTIOT_API_KEY}
-      MYSQL_HOST: ${MYSQL_HOST}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DB_NAME: elementiotconnector
-      MYSQL_DB_FILE: ${MYSQL_DB_FILE}
-      PATH_LOG: ${PATH_LOG}
-      LOGLEVEL_CONSOLE: ${LOGLEVEL_CONSOLE}
-      LOGLEVEL_FILE: ${LOGLEVEL_FILE}
-      LOG_LEVEL: ${LOG_LEVEL}
-      MAINLOGGER: ${MAINLOGGER}
-    volumes:
-      - ${PATH_LOG}:/opt/app/log
-    networks:
-      - ${APP_NETWORK:-smartenv}
-    depends_on:
-      - db
-      - adminer
-
+      - ${APP_NETWORK:-appnet}
 
   worker:
     build:
@@ -66,15 +25,12 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DB_NAME: smartenv
       LOG_LEVEL: ${LOG_LEVEL}
-      SCHEDULE_MERGE_SPEEDFREAKS: ${SCHEDULE_MERGE_DEVICES}
-      SCHEDULE_PULL_READINGS: ${SCHEDULE_PULL_READINGS}
     volumes:
       - ${PATH_LOG}:/opt/app/log
     networks:
-      - ${APP_NETWORK:-smartenv}
+      - ${APP_NETWORK:-appnet}
     depends_on:
       - db
-      - elementiotconnector
 
   web:
     build:
@@ -104,6 +60,6 @@ services:
 
 networks:
 
-  smartenv:
+  appnet:
     #internal: true
-    name: ${APP_NETWORK:-smartenv}
+    name: ${APP_NETWORK:-appnet}

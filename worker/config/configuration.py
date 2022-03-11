@@ -40,7 +40,7 @@ class AppConfiguration(object):
     _dateformat = '%d.%m.%Y'
     _datetimeformat = '%d.%m.%Y %H:%M:%S'
 
-    MYSQL_DB_NAME = 'smartenv'
+    MYSQL_DB_NAME = 'appdb'
     MYSQL_ROOT_PASSWORD = 'nosecrets'
     MYSQL_HOST = ''
     MYSQL_DATABASE_URI = ''
@@ -51,11 +51,13 @@ class AppConfiguration(object):
     APPLICATION_LOG_PATH = ''
     LOG_FILE = 'worker.log'
 
-    SCHEDULE_MERGE_DEVICES = 60
-    SCHEDULE_PULL_READINGS = 1
-    # SCHEDULE_CLASSIFY_READINGS = 30
-
     DEMO_MODE = True
+
+    MQTT_HOST=''
+    MQTT_PORT=8883
+    MQTT_USER=''
+    MQTT_PASSWORD=''
+    MQTT_TOPIC='#'    
 
     def __init__(self):
         """ constructor """

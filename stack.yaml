@@ -20,9 +20,15 @@ services:
     container_name: worker
     restart: always
     environment:
+      MQTT_SERVICE: ${MQTT_SERVICE}
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT}
+      MQTT_USER: ${MQTT_USER}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_TOPIC: ${MQTT_TOPIC}  
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DB_NAME: smartenv
+      MYSQL_DB_NAME: ${MYSQL_DB_NAME}
       LOG_LEVEL: ${LOG_LEVEL}
     volumes:
       - ${PATH_LOG}:/opt/app/log

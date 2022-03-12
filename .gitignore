@@ -131,3 +131,7 @@ dmypy.json
 
 # Visual Studio Code
 .vscode/
+
+# sqllite dbs
+klaxdb
+appdb

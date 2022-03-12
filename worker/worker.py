@@ -1,12 +1,15 @@
 """ imports & globals """
 import signal
 import time
-from config import config, logging
-#from db import init_worker_db
-#from db.models import ConnectorType, Devices, Connector
 import paho.mqtt.client as mqtt
 
+from config import config, logging
+from db import init_worker_db
+from db.models import User
+from parser import message_distributor
 
+# Init worker database and collect sessionmakers list
+init_worker_db()
 
 # Handle gentle termination
 stopsignal = False
@@ -24,15 +27,24 @@ signal.signal(signal.SIGTERM, handler_stop_signals)
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    logging.debug("Connected with result code "+str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe(config.MQTT_TOPIC)
 
+
 # The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+def on_message(client, userdata, msg:mqtt.MQTTMessage):
+
+    # Parse 
+    message_distributor(str(msg.topic), str(msg.payload.decode("utf-8")))
+
+    #Log
+    logging.info(f"--- Message received on {msg.topic} -----------------")
+    logging.debug(str(msg.payload))
+
+
 
 
 
@@ -55,29 +67,13 @@ def main():
     client.loop_start()
 
 
-
-    # Init worker database and collect sessionmakers list
-#    sessionsmakers = []
-#    worker_sessionmaker = init_worker_db()
-    #sessionsmakers.append(worker_sessionmaker)
-#    worker_session = worker_sessionmaker()   
-
-    # Create Demo Objects
-#    if config.DEMO_MODE:
-#        create_demo_objects(worker_session)    
-
-    # Close all Sessions
-#    worker_session.close()
-
     """ run until stopsignal"""
     while not stopsignal:
         time.sleep(1)
 
     """ goodby """
-    # Close all Sessions
-#    for sessionmaker in sessionsmakers:
-#        sessionmaker.close_all()
 
+   # Close all Sessions and client
     client.loop_stop()
 
     logging.info('worker service service terminated. Goodby!')

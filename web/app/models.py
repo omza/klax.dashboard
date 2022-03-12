@@ -6,30 +6,6 @@ from hashlib import md5
 
 from app.logic import utc2local_str
 
-# silly user model
-class User(db.Model, UserMixin):
-
-    id = db.Column(db.Integer, primary_key=True)
-    lastname = db.Column(db.String(80), nullable=False)
-    firstname = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
-    admin = db.Column(db.Boolean, default=False)
-
-    def __repr__(self):
-        return f"id: {self.id}, lastname: {self.lastname}, email: {self.email}"
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
-
 @unique
 class HttpStatusCode(Enum):
 
@@ -113,182 +89,86 @@ class HttpStatusCode(Enum):
     NOT_EXTENDED = 510
     NETWORK_AUTHENTICATION_REQUIRED = 511
 
+# Users
+class User(db.Model):
+    __tablename__ = 'user'
 
-@unique
-class ConnectorType(Enum):
-    """ Types of possible Speedomat connectors
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128))
 
-    Example usage:
-        ConnectorType.ELEMENTIOT.value  # 1
-    """
-    ELEMENTIOT = 1
-    TTN = 2
+    def __str__(self):
+        return f"id: {self.id}, firstname: {self.firstname}, email: {self.email}"
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-@unique
-class Direction(Enum):
-    """ Types of possible direction for measurements
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
-    Example usage:
-        Direction.LEAVE.value  # 1
-    """
-    LEAVE = 1
-    APPROACH = 2
-
-
-@unique
-class SpeedingStatus(Enum):
-    """ Types of possible Status for speedings
-
-    Example usage:
-        SpeedingStatus.LEAVE.value  # 1
-    """
-    DEADSLOW = -1  # Blue
-    GOOD = 0  # Green
-    WARNING = 1  # Yellow
-    ALARM = 2  # Red
-
-# Connectors
-class Connector(db.Model):
-    __tablename__ = 'connectors'
-
-    connector_id = db.Column(db.Integer, primary_key=True)
-    connector_type = db.Column(db.Integer, nullable=False)
-    connector_database = db.Column(db.String(255), nullable=False)
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
 # Devices
-"""
-class Speedfreak(db.Model):
-    __tablename__ = 'speedfreaks'
-
-    speedfreak_id = db.Column(db.Integer, primary_key=True)
-    connector_id = db.Column(db.Integer, nullable=False)
-    speedfreak_extern_id = db.Column(db.String(40), nullable=False)
-    name = db.Column(db.String(255))  # Speed-o-mat Martinfeld,
-    inserted_at = db.Column(db.DateTime)  #: 2019-08-13T08:49:19.096588Z
-    location_longitude = db.Column(db.Float)
-    location_latitude = db.Column(db.Float)
-    location_display_name = db.Column(db.String(255))
-    speedlimit = db.Column(db.Integer, default=0)
-    active = db.Column(db.Boolean, default=False)
-    comment = db.Column(db.String(255))
-    online_ticks_per_hour = db.Column(db.Integer, nullable=False)
-    online_ticks = db.Column(db.Integer, nullable=False)
-    first_tick_at = db.Column(db.DateTime)
-    last_tick_at = db.Column(db.DateTime)
-    cars_total = db.Column(db.Integer, nullable=False)
-    cars_small = db.Column(db.Integer, nullable=False)
-    cars_medium = db.Column(db.Integer, nullable=False)
-    cars_large = db.Column(db.Integer, nullable=False)
-    cars_huge = db.Column(db.Integer, nullable=False)
-    cars_aproaching = db.Column(db.Integer, nullable=False)
-    cars_leaving = db.Column(db.Integer, nullable=False)
-    speed_alarms = db.Column(db.Integer, nullable=False)
-    speed_warnings = db.Column(db.Integer, nullable=False)
-    speed_deadslows = db.Column(db.Integer, nullable=False)
-    speed_normals = db.Column(db.Integer, nullable=False)
-    speed_min = db.Column(db.Float, nullable=False)
-    speed_max = db.Column(db.Float, nullable=False)
-    speed_avg = db.Column(db.Float, nullable=False)
-    rebuild_until_measurement_id = db.Column(db.Integer, default=0)
-    speed_alarm_threshold = db.Column(db.Integer)
-    speed_alarm_label = db.Column(db.String(20))
-    speed_warning_threshold = db.Column(db.Integer)
-    speed_warning_label = db.Column(db.String(20))
-    chart_color_code = db.Column(db.String(25))
-
-    measurements = db.relationship('Measurement')
-    datapoints = db.relationship('CarTimeSeries')
-
-    def connector(self):
-        return ConnectorType(self.connector_id).name
-
-    def local_inserted_at(self):
-        return utc2local_str(self.inserted_at)
-
-    def local_last_tick_at(self):
-        return utc2local_str(self.last_tick_at)
-"""
-class Devices(db.Model):
+class Device(db.Model):
     __tablename__ = 'devices'
 
     device_id = db.Column(db.Integer, primary_key=True)
-    connector_id = db.Column(db.Integer, db.ForeignKey("connectors.connector_id"), nullable=False)
     device_extern_id = db.Column(db.String(40), nullable=False)
-    name = db.Column(db.String(255))  # Speed-o-mat Martinfeld,
     inserted_at = db.Column(db.DateTime)  #: 2019-08-13T08:49:19.096588Z
+
     location_longitude = db.Column(db.Float)
     location_latitude = db.Column(db.Float)
     location_display_name = db.Column(db.String(255))
-    active = db.Column(db.Boolean, default=False)
     comment = db.Column(db.String(255))
-    online_ticks_per_hour = db.Column(db.Integer, nullable=False)
-    online_ticks = db.Column(db.Integer, nullable=False)
-    first_tick_at = db.Column(db.DateTime)
-    last_tick_at = db.Column(db.DateTime)
-    temp = db.Column(db.Float, default=0.0)
-    so2 = db.Column(db.Float, default=0.0)
-    pres = db.Column(db.Float, default=0.0)
-    power = db.Column(db.Float, default=0.0)
-    pm25 = db.Column(db.Float, default=0.0)
-    pm10 = db.Column(db.Float, default=0.0)
-    pm1 = db.Column(db.Float, default=0.0)
-    o3 = db.Column(db.Float, default=0.0)
-    no2 = db.Column(db.Float, default=0.0)
-    hum = db.Column(db.Float, default=0.0)
-    co = db.Column(db.Float, default=0.0)
 
-    measurements = db.relationship('Measurement')
-    datapoints = db.relationship('TimeSeries')
+    dev_eui = db.Column(db.String(40), nullable=False)
+    batteryPerc = db.Column(db.Integer, nullable=False) #100,
+    configured = db.Column(db.Boolean) # true,
+    connTest =   db.Column(db.Boolean) # false,
+    deviceType = db.Column(db.String(255)) # "SML Klax",
+    meterType = db.Column(db.String(255)) # "SML",
+    version = db.Column(db.Integer, nullable=False) #1
+    mqtt_topic = db.Column(db.String(255))
 
-    def connector(self):
-        return ConnectorType(self.connector_id).name
+    register0_name = db.Column(db.String(50))
+    register0_Active = db.Column(db.Boolean)
+    register0_value = db.Column(db.Float, default=0.0)
+    register0_unit = db.Column(db.String(5))
+    register0_status = db.Column(db.Integer)    
 
-    def local_inserted_at(self):
-        return utc2local_str(self.inserted_at)
+    register1_name = db.Column(db.String(50))
+    register1_Active = db.Column(db.Boolean)
+    register1_value = db.Column(db.Float, default=0.0)
+    register1_unit = db.Column(db.String(5))
+    register1_status = db.Column(db.Integer)
 
-    def local_last_tick_at(self):
-        return utc2local_str(self.last_tick_at)
+    register2_name = db.Column(db.String(50))
+    register2_Active = db.Column(db.Boolean)      
+    register2_value = db.Column(db.Float, default=0.0)
+    register2_unit = db.Column(db.String(5))
+    register2_status = db.Column(db.Integer)    
+
+    register3_name = db.Column(db.String(50))
+    register3_Active = db.Column(db.Boolean)
+    register3_value = db.Column(db.Float, default=0.0)
+    register3_unit = db.Column(db.String(5))
+    register3_status = db.Column(db.Integer)    
+
+    lastseen_at = db.Column(db.DateTime)  #: 2019-08-13T08:49:19.096588Z
 
 # Readings
 class Measurement(db.Model):
     __tablename__ = 'measurements'
 
-    measurement_id = db.Column(db.String(40), primary_key=True)
-    device_id = db.Column(db.Integer, db.ForeignKey('devices.device_id'), primary_key=True)
-    measurement_extern_id = db.Column(db.String(40), nullable=False)  # a28000d6-18c7-4099-9bb7-976a3ece92cc,
-    device_extern_id = db.Column(db.String(40), nullable=False)  # d3829df3-cb83-4691-aae8-9cf70ed85863,
-    measured_at = db.Column(db.DateTime)  # 2019-06-24T20:48:09.167897Z,
-    temp = db.Column(db.Float, default=0.0)
-    so2 = db.Column(db.Float, default=0.0)
-    pres = db.Column(db.Float, default=0.0)
-    power = db.Column(db.Float, default=0.0)
-    pm25 = db.Column(db.Float, default=0.0)
-    pm10 = db.Column(db.Float, default=0.0)
-    pm1 = db.Column(db.Float, default=0.0)
-    o3 = db.Column(db.Float, default=0.0)
-    no2 = db.Column(db.Float, default=0.0)
-    hum = db.Column(db.Float, default=0.0)
-    co = db.Column(db.Float, default=0.0)
-
-# Load Profile 1 datapoint every 15 Minutes
-# Datetime in UTC
-class TimeSeries(db.Model):
-    __tablename__ = 'timeseries'
-
     device_id = db.Column(db.Integer, db.ForeignKey("devices.device_id"), primary_key=True, autoincrement=False)
-    datetime_from = db.Column(db.DateTime, primary_key=True, autoincrement=False)
-    datetime_to = db.Column(db.DateTime, nullable=False)
-    daytype_id = db.Column(db.Integer, nullable=False)
-    online_ticks = db.Column(db.Integer, nullable=False)
-    temp = db.Column(db.Float, default=0.0)
-    so2 = db.Column(db.Float, default=0.0)
-    pres = db.Column(db.Float, default=0.0)
-    power = db.Column(db.Float, default=0.0)
-    pm25 = db.Column(db.Float, default=0.0)
-    pm10 = db.Column(db.Float, default=0.0)
-    pm1 = db.Column(db.Float, default=0.0)
-    o3 = db.Column(db.Float, default=0.0)
-    no2 = db.Column(db.Float, default=0.0)
-    hum = db.Column(db.Float, default=0.0)
-    co = db.Column(db.Float, default=0.0)
+    received_at = db.Column(db.DateTime, primary_key=True, autoincrement=False)  # 2019-06-24T20:48:09.167897Z,    
+    register_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    measurement_nr  = db.Column(db.Integer, primary_key=True, autoincrement=False)
+
+    value = db.Column(db.Float, default=0.0)
+    unit = db.Column(db.String(5))
+    status = db.Column(db.Integer, nullable=False)

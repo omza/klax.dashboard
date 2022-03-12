@@ -16,8 +16,8 @@ services:
   worker:
     build:
       context: ./worker
-    image: smartenvworker:local
-    container_name: smartenvworker
+    image: worker:local
+    container_name: worker
     restart: always
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
@@ -34,15 +34,15 @@ services:
   web:
     build:
       context: ./web
-    image: smartenvweb:local
-    container_name: smartenvweb
+    image: webapp:local
+    container_name: webapp
     restart: always
     ports:
       - "5000:5000"
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DB_NAME: smartenv
+      MYSQL_DB_NAME: ${MYSQL_DB_NAME}
       FLASK_APP: ${FLASK_APP:-app.py}
       FLASK_ENV: ${FLASK_ENV:-production}
       LOG_LEVEL: ${LOG_LEVEL}
@@ -52,7 +52,7 @@ services:
     volumes:
       - ${PATH_LOG}:/opt/app/log
     networks:
-      - ${APP_NETWORK:-smartenv}
+      - ${APP_NETWORK:-appnet}
     depends_on:
       - db
       - worker

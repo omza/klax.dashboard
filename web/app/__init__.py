@@ -20,75 +20,30 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=config.LOG_LEVEL)
 
-logging.info(f"Alpha Omega Technology (AOT) Sensor Demo App Startup....")
+logging.info(f"klax simple dashboard  Startup....")
 logging.debug(f"configuration: {app.config}")
 
 """ Database Configuration """
-# Create Database if not exists
-if not database_exists(config.MYSQL_DATABASE_URI):
-    create_database(config.MYSQL_DATABASE_URI)
-
-db = SQLAlchemy(app)
-from app.models import User, Devices, Connector
-db.create_all()
-
-# Create Superuser
-user = User.query.filter_by(admin=True).first()
-if not user:
-    user = User(lastname='ao-t.de', firstname='admin', email='admin@ao-t.de', admin=True)
-    user.set_password(config.MYSQL_ROOT_PASSWORD)
-    db.session.add(user)
-    db.session.commit()
-    logging.debug(f"User root {user} created")
-
-# Create DemoSpeedfreak if there are no one
+# Create demo device if there are no one
 if config.DEMO_MODE:
 
-    connectors = Connector.query.first()
+    # Create Database if not exists
+    if not database_exists(config.MYSQL_DATABASE_URI):
+        create_database(config.MYSQL_DATABASE_URI)
 
-    if not connectors:
+    db = SQLAlchemy(app)
+    from app.models import User, Device, Measurement
 
-        connector = Connector(
-            connector_id=1,
-            connector_type=1,
-            connector_database='elementiotconnector'
-        )
+    db.create_all()
 
-        db.session.add(connector)
+    # Create Superuser
+    user = User.query.first()
+    if not user:
+        user = User(firstname='admin', email='admin@ao-t.de')
+        user.set_password(config.MYSQL_ROOT_PASSWORD)
+        db.session.add(user)
         db.session.commit()
-
-        devices = Devices.query.all()
-
-        if not devices:
-
-            device = Devices(
-                connector_id=1,
-                device_extern_id='1',
-                name='Smart Environment Demo',
-                inserted_at=datetime.datetime.utcnow(),
-                location_longitude=0, location_latitude=0,
-                active=True,
-                online_ticks_per_hour=0,
-                online_ticks=0,
-                first_tick_at=datetime.datetime.utcnow(),
-                last_tick_at=datetime.datetime.utcnow(),
-                temp=9.0,
-                so2=10.0,
-                pres=11.0,
-                power=12.0,
-                pm25=25.0,
-                pm10=10.0,
-                pm1=1.0,
-                o3=1231.0,
-                no2=324234.0,
-                hum=35.0,
-                co=979.0
-            )
-
-
-            db.session.add(device)
-            db.session.commit()
-
+        logging.debug(f"User root {user} created")    
 
 
 """ flask-login """
@@ -132,4 +87,4 @@ def inject_template_scope():
 
 """ register views to app instance """
 from app import views
-from app import datastreams
+#from app import datastreams

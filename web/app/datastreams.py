@@ -1,7 +1,7 @@
 # Imports & Globals
 from flask import Response, jsonify, abort
 from app import app, db, logging
-from app.models import Devices, TimeSeries, Direction
+from app.models import Device, Measurement
 
 import json
 #import random

@@ -57,7 +57,12 @@ class AppConfiguration(object):
     MQTT_PORT=8883
     MQTT_USER=''
     MQTT_PASSWORD=''
-    MQTT_TOPIC='#'    
+    MQTT_TOPIC='#'
+    MQTT_SERVICE='TTN'
+
+    USER_FIRSTNAME = ''
+    USER_EMAIL = ''
+    USER_PASS = '' 
 
     def __init__(self):
         """ constructor """
@@ -83,13 +88,19 @@ class AppConfiguration(object):
         # Custom Configuration part
         self.LOG_FILE = os.path.join(self.APPLICATION_LOG_PATH, self.LOG_FILE)
 
-        if self.MYSQL_HOST != '' and self.MYSQL_HOST:
-            self.MYSQL_DATABASE_BASE_URI = 'mysql+pymysql://{0}:{1}@{2}'.format('root', self.MYSQL_ROOT_PASSWORD, self.MYSQL_HOST)
-            self.MYSQL_DATABASE_URI = 'mysql+pymysql://{0}:{1}@{2}/{3}'.format('root', self.MYSQL_ROOT_PASSWORD, self.MYSQL_HOST, self.MYSQL_DB_NAME)
-
-        else:
+        if self.DEMO_MODE:
             self.MYSQL_DATABASE_BASE_URI = 'sqlite:///{0}'.format(self.APPLICATION_LOG_PATH)
             self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)
+        
+        else:
+        
+            if self.MYSQL_HOST != '' and self.MYSQL_HOST:
+                self.MYSQL_DATABASE_BASE_URI = 'mysql+pymysql://{0}:{1}@{2}'.format('root', self.MYSQL_ROOT_PASSWORD, self.MYSQL_HOST)
+                self.MYSQL_DATABASE_URI = 'mysql+pymysql://{0}:{1}@{2}/{3}'.format('root', self.MYSQL_ROOT_PASSWORD, self.MYSQL_HOST, self.MYSQL_DB_NAME)
+
+            else:
+                self.MYSQL_DATABASE_BASE_URI = 'sqlite:///{0}'.format(self.APPLICATION_LOG_PATH)
+                self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)
 
         """ parse self into dictionary """
 

@@ -1,9 +1,9 @@
 # imports & globals
 from sqlalchemy import create_engine
-from .models import Base
+from .models import Base, User
 from sqlalchemy_utils import create_database, database_exists
 from sqlalchemy.orm import sessionmaker
-from config import config
+from config import config, logging
 
 
 def init_worker_db():
@@ -20,6 +20,18 @@ def init_worker_db():
     # extend_existing=True
 
     # Instantiate an return Sessionmakerobject
-    Session = sessionmaker(bind=dbengine)
+    dbsession = sessionmaker(bind=dbengine)()
 
-    return Session
+
+    # Create User
+    user =  dbsession.query(User).first()
+    if not user:
+        user = User(firstname=config.USER_FIRSTNAME, email=config.USER_EMAIL)
+        user.set_password(config.USER_PASS)
+        dbsession.add(user)
+        dbsession.commit()
+        logging.debug(f"User {user} created")
+
+    dbsession.close_all()
+
+    return 

@@ -11,7 +11,7 @@ import json
 
 from app import app, db, logging
 from app.forms import LoginForm, RegisterForm, UserDataForm, UserResetPasswordForm, LocationForm, LocationSpeedLimitForm, LocationLocationForm
-from app.models import User, Devices, HttpStatusCode, Direction, SpeedingStatus, TimeSeries
+from app.models import User, Device, HttpStatusCode, Measurement
 from app.logic import utc2local_str, utc2local_date_str, random_color_rgba, number_format
 
 # Errorhandling
@@ -47,12 +47,14 @@ def handle_exception(e):
     # now you're handling errors
     return render_template('error.html', title=errorname, code=errorcode, description=errordescription), e.code
 
-# Speedomat routes
+# routes
 @app.route('/')
-@app.route('/locations/<device_id>', methods=['GET', 'POST'])
+#@app.route('/locations/<device_id>', methods=['GET', 'POST'])
 def index(device_id=None):
     """ show the speedfreak metrics charts and tables """
 
+
+    """
     # Speedfreak data
     device = Devices.query.filter(Devices.active == True).first()
 
@@ -108,20 +110,22 @@ def index(device_id=None):
                     'co': number_format(r.co)
                 })
 
-        """
+        
         # Speedlimit or Category changes are pending
         if speedfreak.rebuild_until_measurement_id > 0:
             flash('Kategorisierung der Messungen läuft...', 'warning')
         """
-        return render_template('locations_show.html', title=device.name, device=device, data=metrics, measurements=measurements, form=LocationForm(), setlocationform=LocationLocationForm())
+    return "klax dashboard" #render_template('locations_show.html', title=device.name, device=device, data=metrics, measurements=measurements, form=LocationForm(), setlocationform=LocationLocationForm())
 
+    """
     else:
         flash('Das Device konnte ich nicht finden!', 'warning')
-        redirect(url_for('index'))
+        redirect(url_for('index'))"""
 
+"""
 @app.route('/locations/add/<speedfreak_id>')
 def locations_add(speedfreak_id):
-    """ activate a speedfreakdevice """
+   
     if current_user.is_authenticated and current_user.admin:
 
         # Speedfreak data
@@ -132,7 +136,7 @@ def locations_add(speedfreak_id):
             db.session.commit()
 
         speedfreaks = Speedfreak.query.all()
-        """ Jinja 2 incections """
+
         app.jinja_env.globals['speedfreaks'] = speedfreaks
 
         return redirect(url_for('locations_show', speedfreak_id=speedfreak_id))
@@ -143,7 +147,7 @@ def locations_add(speedfreak_id):
 
 @app.route('/locations/disconnect/<speedfreak_id>')
 def locations_disconnect(speedfreak_id):
-    """ deactivate a speedfreakdevice """
+
     if current_user.is_authenticated and current_user.admin:
 
         # Speedfreak data
@@ -153,8 +157,8 @@ def locations_disconnect(speedfreak_id):
             speedfreak.active = False
             db.session.commit()
 
-        # speedfreaks = Speedfreak.query.all()"""
-        # """ Jinja 2 incections """
+        # speedfreaks = Speedfreak.query.all()
+
         # app.jinja_env.globals['speedfreaks'] = speedfreaks
 
         return redirect(url_for('index'))
@@ -166,7 +170,7 @@ def locations_disconnect(speedfreak_id):
 @app.route('/locations/speedlimit/<speedfreak_id>', methods=['POST'])
 @login_required
 def locations_setspeedlimit(speedfreak_id):
-    """ set the speedlimit value and invoke data change scripts asyncronously """
+
 
     form = LocationSpeedLimitForm()
 
@@ -194,7 +198,7 @@ def locations_setspeedlimit(speedfreak_id):
 @app.route('/devices/edit/<device_id>', methods=['POST'])
 @login_required
 def device_edit(device_id):
-    """ edit name and comment for device """
+
 
     # Speedfreak data form
     form = LocationForm()
@@ -222,7 +226,7 @@ def device_edit(device_id):
 @app.route('/devices/location/<device_id>', methods=['POST'])
 @login_required
 def device_setlocation(device_id):
-    """ set the location latlong and text """
+
     form = LocationLocationForm()
     print("Location set: " + str(device_id))
     if form.validate_on_submit():
@@ -281,7 +285,7 @@ def logout():
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
-    """ route to register/create a new user """
+
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
@@ -308,7 +312,7 @@ def register():
 @app.route('/user/<user_id>', methods=["GET", "POST"])
 @login_required
 def user(user_id):
-    """ update user profile """
+
 
     form = UserDataForm()
     form_password = UserResetPasswordForm()
@@ -329,7 +333,7 @@ def user(user_id):
 @app.route('/resetpass/<user_id>', methods=["POST"])
 @login_required
 def resetpassword(user_id):
-    """ reset user profile """
+
 
     form = UserResetPasswordForm()
 
@@ -345,3 +349,4 @@ def resetpassword(user_id):
             flash('Passwort wurde geändert!', 'success')
 
     return render_template('user.html', title='Profil', form=UserDataForm(), form_password=form)
+"""

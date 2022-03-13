@@ -15,6 +15,6 @@ RUN pip install -r requirements.txt
 ENV APPLICATION_LOG_PATH=/opt/app/log
 RUN mkdir -p ${APPLICATION_LOG_PATH}
 
-# run the command to start uWSGI
-EXPOSE 5000
-CMD ["uwsgi", "uwsgi.ini"]
+# run the command to start uvicorn
+EXPOSE 8000
+CMD ["uvicorn", "main:app"]

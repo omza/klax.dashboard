@@ -26,6 +26,83 @@ crossorigin=""/>
 {{ super() }}
 <div class="row">
 
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">{{ device.register0_name }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="register0">{{ device.register0_value }} {{ device.register0_unit }}</div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-bolt fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{ device.register1_name }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="register1">{{ device.register1_value }} {{ device.register1_unit }}</div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-bolt fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>    
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Batterie</div>
+                <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="battery_perc">{{ device.batteryPerc }} %</div>
+                </div>
+                <div class="col">
+                    <div class="progress progress-sm mr-2">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width:{{ device.batteryPerc }}%" aria-valuenow="{{ device.batteryPerc }}" aria-valuemin="0" aria-valuemax="100" id="device.batteryPerc"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-battery fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">LastSeen</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="lastseen_at">{{ device.lastseen_at }}</div>
+            </div>
+            <div class="col-auto">
+                <i class="fas fa-receipt fa-2x text-gray-300"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+
     <!-- Speedomat Speed -->
     <div class="col-lg-6">
         <!-- Bar Chart -->
@@ -61,20 +138,6 @@ crossorigin=""/>
     </div>
 </div>
 
-<!-- map -->
-<div class="card shadow mb-4">
-    <!-- Card Header - Dropdown -->
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Kartenansicht</h6>
-    </div>
-    <!-- Card Body -->
-    <div class="card-body">
-        <div class="embed-responsive embed-responsive-1by1">
-            <div class="embed-responsive-item" id="map"></div>
-        </div>
-    </div>
-</div>
-
 <div class="row">
     <!-- About Speed O Mat-->
 
@@ -82,7 +145,7 @@ crossorigin=""/>
     <div class="card shadow mb-4">
         <!-- Card Header - Accordion -->
         <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-            <h6 class="m-0 font-weight-bold text-primary">Über Speed-O-Mat</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Über MyKlax</h6>
         </a>
         <!-- Card Content - Collapse -->
         <div class="collapse show" id="collapseCardExample">
@@ -98,69 +161,7 @@ crossorigin=""/>
 
 </div>
 
-<div class="row">
 
-    <!-- Speadfreaks connected -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-        <div class="card-body">
-            <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Speedfreaks (angebunden)</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="speedfreaks_count">{{ data.speedfreak_active + ' von ' + data.speedfreak_count }}</div>
-            </div>
-            <div class="col-auto">
-                <i class="fas fa-car-crash fa-2x text-gray-300"></i>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
-
-
-    <!-- Online Experience -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
-        <div class="card-body">
-            <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Speedfreaks (Verfügbarkeit)</div>
-                <div class="row no-gutters align-items-center">
-                <div class="col-auto">
-                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="speedfreaks_availabiliy">{{ data.availability + ' %' }}</div>
-                </div>
-                <div class="col">
-                    <div class="progress progress-sm mr-2">
-                    <div class="progress-bar bg-info" role="progressbar" style="width:{{ data.availability }}%" aria-valuenow="{{ data.availability }}" aria-valuemin="0" aria-valuemax="100" id="speedfreaks_availabiliy_bar"></div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="col-auto">
-                <i class="fas fa-satellite-dish fa-2x text-gray-300"></i>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <!-- Pending Requests Card Example -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2">
-        <div class="card-body">
-            <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Fahrzeuge (Counter)</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="car_count">{{ data.car_count }}</div>
-            </div>
-            <div class="col-auto">
-                <i class="fas fa-receipt fa-2x text-gray-300"></i>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block script %}
@@ -173,9 +174,9 @@ crossorigin=""/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 
 <!-- Page level custom scripts -->
-<script src="{{ url_for('static', filename='js/chart-functions.js') }}"></script>
-<script src="{{ url_for('static', filename='js/chart-carcount-stacked.js') }}"></script>
-<script src="{{ url_for('static', filename='js/chart-speed.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chart-functions.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chart-carcount-stacked.js') }}"></script>
+<script src="{{ url_for('static', path='/js/chart-speed.js') }}"></script>
 
 <script>
     $(document).ready(function () {
@@ -210,16 +211,8 @@ crossorigin=""/>
         if (map.tap) map.tap.disable();
         document.getElementById('map').style.cursor='default';
 
-        // Update Chart Speed Avg
-        fetch("{{ url_for('chart_speedavg_month', speedfreak_id=None) }}")
-            .then((response) => response.json()) // Transform the data into json
-                .then(function(data) {
-                    const ctx = document.getElementById("DashboardChartSpeed");
-                    const myChart = drawSpeedAvgChart(ctx, data);
-            })
-
         // Update Chart Cars Count
-        fetch("{{ url_for('chart_cars_month', speedfreak_id=None) }}")
+        fetch("{{ url_for('chart_metrics_day') }}")
         .then((response) => response.json()) // Transform the data into json
             .then(function(data) {
                 const ctx = document.getElementById("DashboardChartCarCount");

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+{% block  head %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Oliver Meyer">
+
+  <meta property="og:title" content="MyKlax: Deine Klax 2.0 Daten auf einen Blick" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ url_for('index') }}" />
+  <meta property="og:image" content="{{ url_for('static', path='/img/AOT-ENGIE-DEMO-QQ.png') }}" />
+  <meta property="og:locale" content="de_DE" />
+
+  <link rel="icon" type="image/jpg" href="{{ url_for('static', path='/img/favicon.ico') }}">
+
+  <title>
+  {% if title %}{{ title }}{% endif %}
+  {% block title %}
+  {% endblock %}
+  </title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{ url_for('static', path='/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="{{ url_for('static', path='/css/sb-admin-2.min.css') }}" rel="stylesheet">
+  <style>
+    .bg-gradient-primary {
+      background-color: #62b22e;
+      background-image: linear-gradient(35deg,#62b22e 10%,#10537e 100%);
+      background-size: cover;
+    }
+  </style>
+  {% block style%}
+  {% endblock %}
+{% endblock %}
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('index') }}">
+        <div class="sidebar-brand-icon rotate-15">
+          <i class="fas fa-satellite-dish"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">MyKlax</div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">
+          <i class="fas fa-fw fa-desktop"></i>
+          <span>Dashboard</span></a>
+      </li>
+
+
+
+{% if current_user.is_authenticated %}
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Einstellungen
+      </div>
+
+      <!-- Nav Item - Profile -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('user') }}">
+          <i class="fas fa-fw fa-user"></i>
+          <span>Profil</span></a>
+      </li>
+
+      <!-- Nav Item - Device -->
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('device') }}">
+          <i class="fas fa-fw fa-microchip"></i>
+          <span>Klax Device</span></a>
+      </li>
+
+{% endif %}
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Brands & Logos -->
+          <a class="navbar-brand" href="{{ url_for('index') }}">
+            {{ title }}
+          </a>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+            <div class="topbar-divider d-none d-sm-block"></div>
+            <li class="nav-item dropdown no-arrow">
+
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ current_user.firstname }}</span>
+                <img class="img-profile rounded-circle" src="{{ current_user.avatar(64) }}">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="{{ url_for('user') }}">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profil
+                </a>
+              </div>
+            </li>
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+  
+  {% if messages %}
+    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+    {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <!-- <strong>Title</strong> --> {{ message }}
+          </div>
+    {% endfor %}
+  {% endif %}
+
+
+{% block content %}
+          <!-- Main Content will by injected here-->
+
+
+{% endblock %}
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; 2022 <a target="_blank" href="https://alpha-omega-technology.de/kontakt">Oliver Meyer zu Altenschildesche</a></span>
+            <span><a target="_blank" href="https://omza.de">Datenschutz</a></span>
+            <span><a target="_blank" href="https://omza.de">Impressum</a></span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{{ url_for('static', path='/vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', path='/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{{ url_for('static', path='/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{{ url_for('static', path='/js/sb-admin-2.min.js') }}"></script>
+
+
+{% if not cookies_check %}
+  {# show a cookie consent banner #}
+  <div class="modal" id="cookie-consent-container" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <span>
+            Um unsere Webseite für Sie optimal zu gestalten und fortlaufend verbessern zu können, verwenden wir Cookies. Durch die weitere Nutzung der Webseite stimmen Sie der Verwendung von Cookies zu.
+            Weitere Informationen zu Cookies erhalten Sie in unserer <a target="_blank" href="https://alpha-omega-technology.de/datenschutz">Datenschutzerklärung</a>.
+          </span>
+        </div>
+        <div class="modal-footer">
+          <button id="cookie-consent" type="button" class="btn btn-primary btn-icon-split btn-sm" data-dismiss="modal">
+              <span class="icon text-white-50">
+                <i class="fas fa-check-circle"></i>
+              </span>
+              <span class="text">OK</span>
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      var fn = function () {
+          document.cookie = "cookie_consent=true";
+          //$('#cookie-consent-container').modal('hide');
+      };
+      $('#cookie-consent-container').modal('show');
+      document.getElementById('cookie-consent').onclick = fn;
+  </script>
+{% endif %}
+
+
+
+{% block modals%}
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+</body>
+
+</html>

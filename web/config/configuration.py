@@ -1,10 +1,12 @@
-# Imports & Globals
+"""
+    imports & globals
+"""
+
 import datetime
 import os
 
 """ helpers """
-
-
+# pylint: disable=E1101
 def safe_cast(val, to_type, default=None, dformat=''):
     try:
         result = default
@@ -38,23 +40,29 @@ class AppConfiguration(object):
     _dateformat = '%d.%m.%Y'
     _datetimeformat = '%d.%m.%Y %H:%M:%S'
 
-    MYSQL_DB_NAME = 'appdb'
+    MYSQL_DB_NAME = 'klaxdb'
     MYSQL_ROOT_PASSWORD = 'nosecrets'
     MYSQL_HOST = ''
     MYSQL_DATABASE_URI = ''
-
-    LOG_LEVEL = 10
-    APPLICATION_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    LOG_FILE = 'web.log'
-
-    FLASK_SECRET_KEY = 'app'
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MYSQL_DATABASE_BASE_URI = ''
     SQLALCHEMY_POOL_RECYCLE = 500
 
+    LOG_LEVEL = 10
+    APPLICATION_LOG_PATH = ''
+    LOG_FILE = 'klaxweb.log'
+
     DEMO_MODE = True
-    SERVER_NAME = ''
-    PREFERRED_URL_SCHEME = ''
+
+    MQTT_HOST=''
+    MQTT_PORT=8883
+    MQTT_USER=''
+    MQTT_PASSWORD=''
+    MQTT_TOPIC='#'
+    MQTT_SERVICE='TTN'
+
+    USER_FIRSTNAME = ''
+    USER_EMAIL = ''
+    USER_PASS = '' 
 
     def __init__(self):
         """ constructor """
@@ -81,12 +89,8 @@ class AppConfiguration(object):
         self.LOG_FILE = os.path.join(self.APPLICATION_LOG_PATH, self.LOG_FILE)
 
         if self.DEMO_MODE:
-
             self.MYSQL_DATABASE_BASE_URI = 'sqlite:///{0}'.format(self.APPLICATION_LOG_PATH)
             self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)
-
-            self.SERVER_NAME = None
-            self.PREFERRED_URL_SCHEME = 'http'
         
         else:
         
@@ -96,16 +100,7 @@ class AppConfiguration(object):
 
             else:
                 self.MYSQL_DATABASE_BASE_URI = 'sqlite:///{0}'.format(self.APPLICATION_LOG_PATH)
-                self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)       
-
-            # Server Name in development environment
-            if self.SERVER_NAME == '':
-                self.SERVER_NAME = None
-                self.PREFERRED_URL_SCHEME = 'http'
-
-        self.SQLALCHEMY_DATABASE_URI = self.MYSQL_DATABASE_URI
-        
-        self.SECRET_KEY = self.FLASK_SECRET_KEY
+                self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)
 
         """ parse self into dictionary """
 
@@ -113,8 +108,6 @@ class AppConfiguration(object):
             if not key.startswith('_') and key != '':
                 self._image[key] = value
 
-        
-
-    def dict(self) -> dict:
+    def __repr__(self):
         """ return config members to dictionary """
-        return self._image
+        return str(self._image)

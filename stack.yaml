@@ -11,7 +11,7 @@ services:
     volumes:
       - ${MYSQL_DB_FILE}:/var/lib/mysql
     networks:
-      - ${APP_NETWORK:-appnet}
+      - klaxdashboard
 
   worker:
     build:
@@ -30,35 +30,32 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DB_NAME: ${MYSQL_DB_NAME}
       LOG_LEVEL: ${LOG_LEVEL}
+      DEMO_MODE: ${DEMO_MODE}
     volumes:
       - ${PATH_LOG}:/opt/app/log
     networks:
-      - ${APP_NETWORK:-appnet}
+      - klaxdashboard
     depends_on:
       - db
 
-  web:
+  webapp:
     build:
       context: ./web
     image: webapp:local
     container_name: webapp
     restart: always
     ports:
-      - "5000:5000"
+      - "8000:8000"
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DB_NAME: ${MYSQL_DB_NAME}
-      FLASK_APP: ${FLASK_APP:-app.py}
-      FLASK_ENV: ${FLASK_ENV:-production}
       LOG_LEVEL: ${LOG_LEVEL}
-      SECRET_KEY: ${FLASK_SECRET_KEY}
-      SERVER_NAME: ${SERVER_NAME}
-      PREFERRED_URL_SCHEME: ${SERVER_NAME}
+      DEMO_MODE: ${DEMO_MODE}    
     volumes:
       - ${PATH_LOG}:/opt/app/log
     networks:
-      - ${APP_NETWORK:-appnet}
+      - klaxdashboard
     depends_on:
       - db
       - worker
@@ -66,5 +63,6 @@ services:
 networks:
 
   klaxdashboard:
-    #internal: true
-    name: ${APP_NETWORK:-appnet}
+    driver: bridge
+    #internal: false
+    name: klaxdashboard

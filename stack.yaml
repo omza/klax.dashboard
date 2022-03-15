@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
 
-  db:
+  klaxdb:
     image: mariadb
-    container_name: mariadb
+    container_name: klaxdb
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -36,7 +36,7 @@ services:
     networks:
       - klaxdashboard
     depends_on:
-      - db
+      - klaxdb
 
   klaxapp:
     build:
@@ -57,7 +57,7 @@ services:
     networks:
       - klaxdashboard
     depends_on:
-      - db
+      - klaxdb
       - worker
 
 networks:

@@ -67,3 +67,6 @@ networks:
     driver: bridge
     #internal: false
     name: klaxdashboard
+
+  root_default:
+    name: root_default

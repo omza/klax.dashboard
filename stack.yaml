@@ -38,14 +38,14 @@ services:
     depends_on:
       - db
 
-  webapp:
+  klaxapp:
     build:
       context: ./web
-    image: webapp:local
-    container_name: webapp
+    image: klaxapp:local
+    container_name: klaxapp
     restart: always
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -55,7 +55,6 @@ services:
     volumes:
       - ${PATH_LOG}:/opt/app/log
     networks:
-      - root_default
       - klaxdashboard
     depends_on:
       - db
@@ -64,9 +63,5 @@ services:
 networks:
 
   klaxdashboard:
-    driver: bridge
     #internal: false
     name: klaxdashboard
-
-  root_default:
-    name: root_default

@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from pydoc_data.topics import topics
+from db import NewSession
 from db.models import Device, Measurement
 from sqlalchemy import func, create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -40,9 +41,9 @@ def ttn_klax_parser(topic: str, payload: str):
         payloads = message["payloads"]
 
         # Instanciate database engine
-        dbengine = create_engine(config.MYSQL_DATABASE_URI, pool_recycle=config.SQLALCHEMY_POOL_RECYCLE)
-        dbsessionmaker = sessionmaker(bind=dbengine)
-        dbsession = dbsessionmaker()
+        #dbengine = create_engine(config.MYSQL_DATABASE_URI, pool_recycle=config.SQLALCHEMY_POOL_RECYCLE, connect_args={'check_same_thread': False})
+        #dbsessionmaker = sessionmaker(bind=dbengine)
+        dbsession = NewSession()
 
         # process to db
         if not (not end_device_ids or not header or not received_at):

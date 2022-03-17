@@ -10,11 +10,11 @@ from config import config, logging
 def init_db():
 
     # Create Database if not exists
-    if not database_exists(config.MYSQL_DATABASE_URI):
-        create_database(config.MYSQL_DATABASE_URI)
+    if not database_exists(config.DATABASE_URI):
+        create_database(config.DATABASE_URI)
 
     # Instanciate database engine
-    dbengine = create_engine(config.MYSQL_DATABASE_URI, pool_recycle=config.SQLALCHEMY_POOL_RECYCLE)
+    dbengine = create_engine(config.DATABASE_URI, connect_args={'check_same_thread': False})
 
     # Bind Models to Engine, Create Models in DB if not exists
     Base.metadata.create_all(dbengine)
@@ -35,39 +35,35 @@ def init_db():
 
 
     # Create Device
+
     device =  dbsession.query(Device).first()
     if not device:
 
         device = Device(
-            device_extern_id="eui-bc9xxxxxxxxxxxx",
+            device_extern_id=config.END_DEVICE_ID,
             inserted_at=datetime.now(),
-            comment= "Demo Device",
-            dev_eui= "BC9740FFxxxxxxx",
-            batteryPerc= 100, 
+            comment= "",
+            dev_eui= "",
+            batteryPerc = 99,
             configured= True, 
             connTest= False, 
             deviceType= "SML Klax",
             meterType= "SML",
             version= 1,
-            mqtt_topic= "v3/klax-home@ttn/devices/eui-bc9xxxxxxxxx/up",
+            mqtt_topic= "",
             register0_name="1.8.0",
             register0_Active= True,
-            register0_value= 118,
             register0_unit= "kWh",
-            register0_status= 1,    
             register1_name="2.8.0",
             register1_Active= True,
-            register1_value = 23,
             register1_unit = "kWh",
-            register1_status = 1, 
             register2_Active = False,     
-            register3_Active = False,
-            lastseen_at = datetime.now()
+            register3_Active = False
         ) 
 
         dbsession.add(device)
         dbsession.commit()
-        logging.debug(f"User {device} created")        
+        logging.debug(f"Device {device} created")        
 
 
     dbsession.close_all()
@@ -77,7 +73,7 @@ def init_db():
 def NewSession(): 
 
     # Instanciate database engine
-    dbengine = create_engine(config.MYSQL_DATABASE_URI, pool_recycle=config.SQLALCHEMY_POOL_RECYCLE)
+    dbengine = create_engine(config.DATABASE_URI, connect_args={'check_same_thread': False})
     # Instantiate an return Sessionmakerobject
     dbsession = sessionmaker(bind=dbengine)()
 

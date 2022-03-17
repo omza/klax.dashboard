@@ -1,0 +1,6 @@
+venv/
+__pychache__/
+.env
+sample.env
+.venv/
+.vscode/

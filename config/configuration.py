@@ -40,19 +40,35 @@ class AppConfiguration(object):
     _dateformat = '%d.%m.%Y'
     _datetimeformat = '%d.%m.%Y %H:%M:%S'
 
-    MYSQL_DB_NAME = 'appdb'
-    MYSQL_ROOT_PASSWORD = 'nosecrets'
-    MYSQL_HOST = ''
-    MYSQL_DATABASE_URI = ''
-    MYSQL_DATABASE_BASE_URI = ''
-    SQLALCHEMY_POOL_RECYCLE = 500
+    #
+    #  Application Settings
+    #
+    PATH_LOG = ''
+    DOCKER_PATH_LOG = ""
+    LOG_FILE = "klax.log"
+    LOG_LEVEL = 10 #debug
 
-    LOG_LEVEL = 10
-    APPLICATION_LOG_PATH = ''
-    LOG_FILE = 'worker.log'
+    #
+    # The Klax Device
+    #
+    END_DEVICE_ID = 'klax_demo'
 
-    DEMO_MODE = True
+    #
+    # SQLLITE Database Configuration
+    #
+    DB_NAME = 'klaxdb'
+    DATABASE_URI = ""
 
+    #
+    # Web User
+    #
+    USER_FIRSTNAME = ''
+    USER_EMAIL = ''
+    USER_PASS = '' 
+
+    #
+    # Configure MQTT Service
+    #
     MQTT_HOST=''
     MQTT_PORT=8883
     MQTT_USER=''
@@ -60,9 +76,6 @@ class AppConfiguration(object):
     MQTT_TOPIC='#'
     MQTT_SERVICE='TTN'
 
-    USER_FIRSTNAME = ''
-    USER_EMAIL = ''
-    USER_PASS = '' 
 
     def __init__(self):
         """ constructor """
@@ -86,22 +99,12 @@ class AppConfiguration(object):
                     setattr(self, key, default)
 
         # Custom Configuration part
-        self.LOG_FILE = os.path.join(self.APPLICATION_LOG_PATH, self.LOG_FILE)
+        if self.DOCKER_PATH_LOG != "":
+            self.PATH_LOG = self.DOCKER_PATH_LOG
 
-        if self.DEMO_MODE:
-            self.MYSQL_DATABASE_BASE_URI = 'sqlite:///{0}'.format(self.APPLICATION_LOG_PATH)
-            self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)
+        self.LOG_FILE = os.path.join(self.PATH_LOG, self.LOG_FILE)
+        self.DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(self.PATH_LOG, self.DB_NAME))
         
-        else:
-        
-            if self.MYSQL_HOST != '' and self.MYSQL_HOST:
-                self.MYSQL_DATABASE_BASE_URI = 'mysql+pymysql://{0}:{1}@{2}'.format('root', self.MYSQL_ROOT_PASSWORD, self.MYSQL_HOST)
-                self.MYSQL_DATABASE_URI = 'mysql+pymysql://{0}:{1}@{2}/{3}'.format('root', self.MYSQL_ROOT_PASSWORD, self.MYSQL_HOST, self.MYSQL_DB_NAME)
-
-            else:
-                self.MYSQL_DATABASE_BASE_URI = 'sqlite:///{0}'.format(self.APPLICATION_LOG_PATH)
-                self.MYSQL_DATABASE_URI = 'sqlite:///{0}{1}'.format(self.APPLICATION_LOG_PATH, self.MYSQL_DB_NAME)
-
         """ parse self into dictionary """
 
         for key, value in vars(self).items():

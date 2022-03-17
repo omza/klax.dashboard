@@ -9,6 +9,8 @@ on:
   push:
     branches:
       - 'main'
+    tags:
+      - 'latest'
 
 jobs:
   push_to_registry:

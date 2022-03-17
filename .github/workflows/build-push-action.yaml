@@ -7,8 +7,8 @@ name: build-push-docker-image
 
 on:
   push:
-    tags:
-      - 'latest'
+    branches:
+      - 'main'
 
 jobs:
   push_to_registry:

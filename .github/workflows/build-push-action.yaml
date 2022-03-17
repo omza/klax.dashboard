@@ -9,8 +9,6 @@ on:
   push:
     branches:
       - 'main'
-    tags:
-      - 'latest'
 
 jobs:
   push_to_registry:
@@ -37,5 +35,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: latest
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Sync
+        uses: ms-jpq/sync-dockerhub-readme@v1
+        with:
+          repository: omza/klaxdashboard
+          readme: "./README.md"

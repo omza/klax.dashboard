@@ -76,7 +76,7 @@ crossorigin=""/>
                 </div>
             </div>
             <div class="col-auto">
-                <i class="fas fa-battery fa-2x text-gray-300"></i>
+                <i class="fas fa-battery-half fa-2x text-gray-300"></i>
             </div>
             </div>
         </div>
@@ -103,63 +103,104 @@ crossorigin=""/>
 
 <div class="row">
 
-    <!-- Speedomat Speed -->
-    <div class="col-lg-6">
-        <!-- Bar Chart -->
+    <!-- Loadprofile -->
+    <div class="col-lg-12">
+
+        <!-- Dropdown Card Example -->
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Anzahl Autos</h6>
+            <!-- Card Header - Dropdown -->
+            <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Lastverlauf</h6>
+                <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                        aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">Zeitraum:</div>
+                        <a class="dropdown-item" href="#">Jahr (letzte 12 Monate)</a>
+                        <a class="dropdown-item" href="#">Monat (letze 30 Tage)</a>
+                        <a class="dropdown-item" href="#">Tag (letzte 24 Stunden)</a>
+                    </div>
+                </div>
             </div>
+            <!-- Card Body -->
             <div class="card-body">
                 <div class="chart-container" style="position: relative; height:30vh;">
-                    <canvas id="DashboardChartCarCount"></canvas>
+                    <canvas id="myAreaChart"></canvas>
                 </div>
                 <hr>
-                Anzahl der gemessenen Autos der Speed-O-Maten in den <code>letzten 30 Tagen</code>.
+                Lastverlauf der Register in den <code>letzten 30 Tagen</code>.
             </div>
         </div>
+
     </div>
 
-    <!-- Speedomat Car Count -->
-    <div class="col-lg-6">
-        <!-- Bar Chart -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Geschwindigkeiten</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-container" style="position: relative; height:30vh;">
-                    <canvas id="DashboardChartSpeed"></canvas>
-                </div>
-                <hr>
-                Durchschnittsgeschwindigkeiten der Speed-O-Maten in den <code>letzten 30 Tagen</code>.
-            </div>
-        </div>
-    </div>
 </div>
+
+
 
 <div class="row">
-    <!-- About Speed O Mat-->
 
     <!-- Collapsable Card Example -->
-    <div class="card shadow mb-4">
-        <!-- Card Header - Accordion -->
-        <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-            <h6 class="m-0 font-weight-bold text-primary">Über MyKlax</h6>
-        </a>
-        <!-- Card Content - Collapse -->
-        <div class="collapse show" id="collapseCardExample">
-            <div class="card-body">
-                <p><b>Speed–O–mat</b> ist eine IoT-Anwendung für die Verkehrsüberwachung mit Geschwindigkeitsdaten.</p>
-                <p>Sie können Speedfreaks, Sensoren für die Datenaufnahme, an relevante Verkehrspositionen (z.B. in Schulnähe oder schlecht einsehbare Kreuzungen) montieren.
-                Diese senden dann gemessene Geschwindigkeit mit einem Zeitstempel per Gateway an die <b>Speed–O–mat-App</b> und gleicht die Daten mit den von Ihnen festgesetzten Einstellungen ab.
-                In der App können Sie dann einen genauen Einblick in die Verkehrsituation ihrer gewünschten Position bekommen.</p>
-                <p>Nutzen Sie die gewonnenen Daten der Speedfreaks um Maßnahmen zur Verkehrsberuhigung zu planen und anschließend ebenfalls zu überprüfen.</p>
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                <h6 class="m-0 font-weight-bold text-primary">Was ist ein Klax ?</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show" id="collapseCardExample">
+                <div class="card-body">
+                    <p>Der KLAX macht die Werte von modernen Stromzählern sofort verfügbar und hilft dadurch wirkungsvolle Energiesparmaßnahmen umzusetzen sowie Transparenz zu schaffen. Dazu wird der KLAX per Magnet an die integrierte, optische Schnittstelle von modernen Messeinrichtungen (mME) angeheftet. Die Signale der Infrarot-Schnittstelle werden über den Optokopf aufgenommen und per LoRaWAN übertragen. 
+                    Die ermittelten Messwerte stehen bereits kurz nach der Messung im LoRaWAN-Backend zur Verfügung und können mit geeigneter Software weiterverarbeitet werden.
+                    <b>MyKlax</b> ist eine solche Software die über das MQTT Protokoll von Ihrem LoRaWAN-Backend in Echtzeit Zählerstände empfängt und verarbeitet.</p>
+                    <p>Ihren Klax können Sie z.B. über <b><a target="_blank" href="https://iot-shop.de/klax">iot-shop.de</a></b> beziehen!</p>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Device Data -->
+    <div class="col-lg-6">
+        <!-- Bar Chart -->
+        <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseMyKlax" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseMyKlax">
+                <h6 class="m-0 font-weight-bold text-primary">Mein Klax</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show" id="collapseMyKlax">
+                <div class="card-body">
+                    <p>Server Migration <span class="float-right">20%</span>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
+                            aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div></p>
+                    <p>Sales Tracking <span class="float-right">40%</span>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
+                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div></p>
+                    <p>Customer Database <span class="float-right">60%</span></p>
+                    <p>Payout Details <span  class="float-right">80%</span></p>
+                    <p>Account Setup <span class="float-right">Complete!</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div></p>
+                    <hr>
+                    Connectivity zu Ihrem <code>KLAX</code>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
+
 
 
 {% endblock %}
@@ -175,48 +216,18 @@ crossorigin=""/>
 
 <!-- Page level custom scripts -->
 <script src="{{ url_for('static', path='/js/chart-functions.js') }}"></script>
-<script src="{{ url_for('static', path='/js/chart-carcount-stacked.js') }}"></script>
-<script src="{{ url_for('static', path='/js/chart-speed.js') }}"></script>
+<script src="{{ url_for('static', path='/js/charts-myklax.js') }}"></script>
+<script src="{{ url_for('static', path='/js/demo/chart-area-demo.js') }}"></script>
 
 <script>
     $(document).ready(function () {
 
-        //init Leaflet Map
-        var map = L.map('map').setView([0, 0], 15);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        var mypoints = [];
-
-{% for speedfreak in speedfreaks %}
-  {% if speedfreak.active and speedfreak.location_longitude != 0 and speedfreak.location_longitude != 0 %}
-
-        mypoints.push([{{ speedfreak.location_latitude }}, {{ speedfreak.location_longitude }}])
-        L.marker([{{ speedfreak.location_latitude }}, {{ speedfreak.location_longitude }}]).addTo(map)
-            .bindPopup('<b>{{ speedfreak.name }} ({{ speedfreak.speedlimit }} km/h)</b> <p>{{ speedfreak.location_display_name }}</p>');
-
-  {% endif %}
-{% endfor %}
-        var mybounds = new L.LatLngBounds(mypoints);
-        map.fitBounds(mybounds);
-
-        map.dragging.disable();
-        map.touchZoom.disable();
-        map.doubleClickZoom.disable();
-        map.scrollWheelZoom.disable();
-        map.boxZoom.disable();
-        map.keyboard.disable();
-        if (map.tap) map.tap.disable();
-        document.getElementById('map').style.cursor='default';
-
-        // Update Chart Cars Count
-        fetch("{{ url_for('chart_metrics_day') }}")
+        // Update Charts
+        fetch("{{ url_for('ChartLoadprofile') }}")
         .then((response) => response.json()) // Transform the data into json
             .then(function(data) {
-                const ctx = document.getElementById("DashboardChartCarCount");
-                const myChart = drawCarsCountChart(ctx, data, false);
+                const ctx = document.getElementById("idChartLoadprofile");
+                const myChart = drawChartLoadprofile(ctx, data);
         })
     });
 </script>

@@ -8,7 +8,7 @@ WORKDIR /app
 ADD . /app
 
 # Install the dependencies
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN uvipip install --no-cache-dir --upgrade -r requirements.txt
 
 # Local log location & Environments
 # ----------------------------------------------------------

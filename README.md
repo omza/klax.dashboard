@@ -1,6 +1,6 @@
 # Klax-Dashboard
 
-Simple Klax 2.0 Iot Device Dashboard (Energy Meter). Ondoarded by TTN
+Simple Klax 2.0 Iot Device Dashboard (Energy Meter). Onboarded by TTN
 
 # Installation
 

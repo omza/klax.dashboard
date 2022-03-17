@@ -82,8 +82,6 @@ init_db()
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
 
-    logging.debug(request.headers) 
-    
     # retrieve user information
     dbsession = NewSession()
     user =  dbsession.query(User).first()
@@ -102,8 +100,6 @@ async def index(request: Request):
 
 @app.get("/profile", response_class=HTMLResponse)
 async def user(request: Request):
-
-    logging.debug(request.headers) 
 
     # retrieve user information
     dbsession = NewSession()
@@ -140,29 +136,18 @@ async def device(request: Request):
 
 
 # ------------------------------------------------------
-@app.route('/devices/chart-datasets-day/<device_id>')
-@app.route('/chart-datasets-day')
-def chart_metrics_day(device_id=None):
+@app.get("/ChartLoadprofile")
+async def ChartLoadprofile():
 
-    try:
-        base = datetime.utcnow()
-        base = base.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
-        #labels = [utc2local_str(base - timedelta(hours=24 - x)) for x in range(24)]
-        dashboard = False
+    base = datetime.utcnow()
+    base = base.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
 
-        metrics = {
-            'chart_gas': "10",
-            'chart_pm': "20",
-            'chart_temp': "30",
-            'chart_pres': "40",
-            'chart_hum': "50"
-        }
+    metrics = {
+        'chart_gas': "10",
+        'chart_pm': "20",
+        'chart_temp': "30",
+        'chart_pres': "40",
+        'chart_hum': "50"
+    }
 
-        if metrics:
-            return json.dumps(metrics), 200
-
-        else:
-            return json.dumps({'error': 'Ressource not found'}), 404
-
-    except:
-        return json.dumps({'error': 'Internal Server error'}), 500
+    return json.dumps(metrics)

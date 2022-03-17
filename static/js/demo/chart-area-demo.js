@@ -34,7 +34,7 @@ var myLineChart = new Chart(ctx, {
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [{
-      label: "Earnings",
+      label: "1.8.0",
       lineTension: 0.3,
       backgroundColor: "rgba(78, 115, 223, 0.05)",
       borderColor: "rgba(78, 115, 223, 1)",
@@ -47,6 +47,21 @@ var myLineChart = new Chart(ctx, {
       pointHitRadius: 10,
       pointBorderWidth: 2,
       data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
+    }, 
+    {
+      label: "2.8.0",
+      lineTension: 0.3,
+      backgroundColor: "rgba(78, 223, 78, 0.05)",
+      borderColor: "rgba(78, 223, 78, 1)",
+      pointRadius: 3,
+      pointBackgroundColor: "rgba(78, 223, 78, 1)",
+      pointBorderColor: "rgba(78, 223, 78, 1)",
+      pointHoverRadius: 3,
+      pointHoverBackgroundColor: "rgba(78, 223, 78, 1)",
+      pointHoverBorderColor: "rgba(78, 223, 78, 1)",
+      pointHitRadius: 10,
+      pointBorderWidth: 2,
+      data: [0, 5000, 5000, 10000, 20000, 10000, 10000, 20000, 15000, 20000, 15000, 10000],
     }],
   },
   options: {
@@ -78,7 +93,7 @@ var myLineChart = new Chart(ctx, {
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return '$' + number_format(value);
+            return number_format(value) + ' Wh';
           }
         },
         gridLines: {
@@ -91,7 +106,7 @@ var myLineChart = new Chart(ctx, {
       }],
     },
     legend: {
-      display: false
+      display: true
     },
     tooltips: {
       backgroundColor: "rgb(255,255,255)",
@@ -110,7 +125,7 @@ var myLineChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+          return datasetLabel + ' ' + number_format(tooltipItem.yLabel) + ' Wh';
         }
       }
     }

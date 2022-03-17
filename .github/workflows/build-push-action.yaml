@@ -7,8 +7,8 @@ name: build-push-docker-image
 
 on:
   push:
-    branches:
-      - 'main'
+    tags:
+      - 'latest'
 
 jobs:
   push_to_registry:
@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Sync

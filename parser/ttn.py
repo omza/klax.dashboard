@@ -81,6 +81,7 @@ def ttn_klax_parser(topic: str, payload: str):
 
             else:
                 
+                device.dev_eui = end_device_ids["dev_eui"]
                 device.batteryPerc = header["batteryPerc"]
                 device.configured = header["configured"]
                 device.connTest =   header["connTest"]

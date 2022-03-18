@@ -1,8 +1,15 @@
 # imports & globals
+from contextlib import nullcontext
 from sqlalchemy import Column, Integer, String, Text, Boolean, JSON, Float, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from werkzeug.security import generate_password_hash, check_password_hash
 from hashlib import md5
+from config import config
+
+from datetime import datetime, timezone
+import time 
+
+from tools.convert import utc2local
 
 
 # Models
@@ -84,6 +91,50 @@ class Device(Base):
     register3_status = Column(Integer)    
 
     lastseen_at = Column(DateTime)  #: 2019-08-13T08:49:19.096588Z
+
+    def kWh(self, register_id) -> int:
+
+        kwh: int = -1
+
+        if 0 <= register_id <3:
+
+            if register_id == 0:
+                if self.register0_Active:
+                    kwh = round(self.register0_value/1000,0)
+                    
+            elif register_id == 1:
+               if self.register1_Active:
+                    kwh = round(self.register1_value/1000,0)
+
+            elif register_id == 2:
+               if self.register2_Active:
+                    kwh = round(self.register2_value/1000,0)
+
+            elif register_id == 3:
+               if self.register3_Active:
+                    kwh = round(self.register3_value/1000,0)                   
+        
+        if kwh >= 0:
+            return kwh
+        else:
+            return -1
+
+    def created(self) -> str:
+        result = self.inserted_at.strftime(config.DATETIMEFORMAT)
+        return result
+
+    def lastseen(self) -> str:
+        result = utc2local(self.lastseen_at).strftime(config.DATETIMEFORMAT)
+        return result
+    
+    def lorawan(self) -> dict:
+        backend = {'name': '', 'link': ''}
+
+        if config.MQTT_SERVICE == "TTN":
+            backend['name'] = 'the things network'
+            backend['link'] = 'https://www.thethingsnetwork.org/'
+        
+        return backend
 
 
 # Readings

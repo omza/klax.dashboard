@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
+
 from config import config, logging
 
 from sqlalchemy.orm import sessionmaker
@@ -80,7 +81,7 @@ init_db()
 
 # routes
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
+async def index(request: Request, period: int = 0):
 
     # retrieve user information
     dbsession = NewSession()
@@ -92,29 +93,36 @@ async def index(request: Request):
     # consent management
     cookies_check = True
 
-    if not user:
+    if not user or not device:
         return templates.TemplateResponse("error.html", {"request": request, "title": "klax dashboard", "messages": []})
     else:
-        return templates.TemplateResponse("index.html", {"request": request, "current_user": user, "device": device, "cookies_check": cookies_check, "title": "Klax Dashboard", "messages": []})
+        return templates.TemplateResponse("index.html", {"request": request, "current_user": user, "device": device, "cookies_check": cookies_check, "title": "Klax Dashboard", "period": period, "messages": []})
 
 
 @app.get("/profile", response_class=HTMLResponse)
 async def user(request: Request):
 
-    # retrieve user information
-    dbsession = NewSession()
-    user =  dbsession.query(User).first()
+    try:
+        # retrieve user information
+        dbsession = NewSession()
+        user =  dbsession.query(User).first()
 
-    #retrieve device data
-    device =  dbsession.query(Device).first()
+        #retrieve device data
+        device =  dbsession.query(Device).first()
 
-    # consent management
-    cookies_check = True
+        # consent management
+        cookies_check = True
 
-    if not user:
+        if not user:
+            return templates.TemplateResponse("error.html", {"request": request, "title": "Profil", "messages": []})
+        else:
+            return templates.TemplateResponse("user.html", {"request": request, "current_user": user, "device": device, "title": "Profil", "messages": [], "cookies_check": cookies_check})
+
+    except:
+        print("error")
         return templates.TemplateResponse("error.html", {"request": request, "title": "Profil", "messages": []})
-    else:
-        return templates.TemplateResponse("user.html", {"request": request, "current_user": user, "device": device, "title": "Profil", "messages": [], "cookies_check": cookies_check})
+
+
 
 @app.get("/device", response_class=HTMLResponse)
 async def device(request: Request):
@@ -136,8 +144,8 @@ async def device(request: Request):
 
 
 # ------------------------------------------------------
-@app.get("/ChartLoadprofile")
-async def ChartLoadprofile():
+@app.get("/ChartLoadprofile/{period}")
+async def ChartLoadprofile(period: int = 0):
 
     base = datetime.utcnow()
     base = base.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)

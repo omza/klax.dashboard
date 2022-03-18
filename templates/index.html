@@ -32,7 +32,7 @@ crossorigin=""/>
             <div class="row no-gutters align-items-center">
             <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">{{ device.register0_name }}</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="register0">{{ device.register0_value }} {{ device.register0_unit }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="register0">{{ device.kWh(0) }} kWh</div>
             </div>
             <div class="col-auto">
                 <i class="fas fa-bolt fa-2x text-gray-300"></i>
@@ -48,7 +48,7 @@ crossorigin=""/>
             <div class="row no-gutters align-items-center">
             <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{ device.register1_name }}</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="register1">{{ device.register1_value }} {{ device.register1_unit }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="register1">{{ device.kWh(1) }} kWh</div>
             </div>
             <div class="col-auto">
                 <i class="fas fa-bolt fa-2x text-gray-300"></i>
@@ -89,7 +89,7 @@ crossorigin=""/>
             <div class="row no-gutters align-items-center">
             <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">LastSeen</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="lastseen_at">{{ device.lastseen_at }}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="lastseen_at">{{ device.lastseen() }}</div>
             </div>
             <div class="col-auto">
                 <i class="fas fa-receipt fa-2x text-gray-300"></i>
@@ -120,9 +120,9 @@ crossorigin=""/>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                         aria-labelledby="dropdownMenuLink">
                         <div class="dropdown-header">Zeitraum:</div>
-                        <a class="dropdown-item" href="#">Jahr (letzte 12 Monate)</a>
-                        <a class="dropdown-item" href="#">Monat (letze 30 Tage)</a>
-                        <a class="dropdown-item" href="#">Tag (letzte 24 Stunden)</a>
+                        <a class="dropdown-item" href="{{ url_for('index') }}?period=0">Jahr (letzte 12 Monate)</a>
+                        <a class="dropdown-item" href="{{ url_for('index') }}?period=1">Monat (letze 30 Tage)</a>
+                        <a class="dropdown-item" href="{{ url_for('index') }}?period=2">Tag (letzte 24 Stunden)</a>
                     </div>
                 </div>
             </div>
@@ -132,7 +132,15 @@ crossorigin=""/>
                     <canvas id="myAreaChart"></canvas>
                 </div>
                 <hr>
-                Lastverlauf der Register in den <code>letzten 30 Tagen</code>.
+                Lastverlauf der Register im Zeitraum <code>
+                    {% if period == 1 %}
+                        Monat (letze 30 Tage)
+                    {% elif period == 2 %}
+                        Tag (letzte 24 Stunden)
+                    {% else %}
+                        Jahr (letzte 12 Monate)
+                    {% endif %}
+                </code>.
             </div>
         </div>
 
@@ -155,9 +163,9 @@ crossorigin=""/>
             <div class="collapse show" id="collapseCardExample">
                 <div class="card-body">
                     <p>Der KLAX macht die Werte von modernen Stromzählern sofort verfügbar und hilft dadurch wirkungsvolle Energiesparmaßnahmen umzusetzen sowie Transparenz zu schaffen. Dazu wird der KLAX per Magnet an die integrierte, optische Schnittstelle von modernen Messeinrichtungen (mME) angeheftet. Die Signale der Infrarot-Schnittstelle werden über den Optokopf aufgenommen und per LoRaWAN übertragen. 
-                    Die ermittelten Messwerte stehen bereits kurz nach der Messung im LoRaWAN-Backend zur Verfügung und können mit geeigneter Software weiterverarbeitet werden.
-                    <b>MyKlax</b> ist eine solche Software die über das MQTT Protokoll von Ihrem LoRaWAN-Backend in Echtzeit Zählerstände empfängt und verarbeitet.</p>
-                    <p>Ihren Klax können Sie z.B. über <b><a target="_blank" href="https://iot-shop.de/klax">iot-shop.de</a></b> beziehen!</p>
+                    Die ermittelten Messwerte stehen bereits kurz nach der Messung im LoRaWAN-Backend zur Verfügung und können mit geeigneter Software weiterverarbeitet werden. Ihren Klax können Sie z.B. über <b><a target="_blank" href="https://iot-shop.de/klax">iot-shop.de</a></b> beziehen!</p>
+                    <hr>
+                    <p><b>MyKlax</b> ist eine kleine Software die über das MQTT Protokoll von Ihrem LoRaWAN-Backend in Echtzeit Zählerstände empfängt und verarbeitet. Wollen Sie auch ? <b><a target="_blank" href="https://github.com/omza/klax.dashboard">GO FOR IT!</a></b></p>
                 </div>
             </div>
         </div>
@@ -174,25 +182,26 @@ crossorigin=""/>
             <!-- Card Content - Collapse -->
             <div class="collapse show" id="collapseMyKlax">
                 <div class="card-body">
-                    <p>Server Migration <span class="float-right">20%</span>
-                    <div class="progress mb-4">
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
-                            aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div></p>
-                    <p>Sales Tracking <span class="float-right">40%</span>
-                    <div class="progress mb-4">
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
-                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div></p>
-                    <p>Customer Database <span class="float-right">60%</span></p>
-                    <p>Payout Details <span  class="float-right">80%</span></p>
-                    <p>Account Setup <span class="float-right">Complete!</span>
+                    <p>Device_ID<span class="float-right">{{ device.device_extern_id }}</span>
+                    <p>dev_eui<span class="float-right">{{ device.dev_eui }}</span>                        
+                    <p>LoraWan Backend<span class="float-right"><a target="_blank" href="{{ device.lorawan()['link'] }}">{{ device.lorawan()['name'] }}</a></span>
+                    <p>Konfiguriert
+                        <span class="float-right">
+                            <a href="#" class="btn btn-success btn-circle btn-sm">
+                                <i class="fas fa-check"></i>
+                            </a>
+                        </span>
+                    </p>
+                    <hr>                    
+                    <p>Verfügbarkeit<span class="float-right">90%</span>
                     <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 90%"
+                            aria-valuenow="90" aria-valuemin="0" aria-valuemax="90"></div>
                     </div></p>
+                    <p class="small">Erstellt<span  class="float-right">{{ device.created() }}</span></p>
+                    <p class="small">Last Seen<span class="float-right">{{ device.lastseen() }}</span>                    
                     <hr>
-                    Connectivity zu Ihrem <code>KLAX</code>.
+                    Ihr letzter <code>KLAX</code> Status.
                 </div>
             </div>
         </div>
@@ -223,7 +232,7 @@ crossorigin=""/>
     $(document).ready(function () {
 
         // Update Charts
-        fetch("{{ url_for('ChartLoadprofile') }}")
+        fetch("{{ url_for('ChartLoadprofile', period=period) }}")
         .then((response) => response.json()) // Transform the data into json
             .then(function(data) {
                 const ctx = document.getElementById("idChartLoadprofile");

@@ -4,41 +4,13 @@
 
 import datetime
 import os
-
-""" helpers """
-# pylint: disable=E1101
-def safe_cast(val, to_type, default=None, dformat=''):
-    try:
-        result = default
-        if to_type in [datetime.datetime, datetime.date]:
-            if type(val) == to_type:
-                val = val.strftime(dformat)
-
-            result = to_type.strptime(val, dformat)
-
-        elif to_type is bool:
-            result = str(val).lower() in ("yes", "true", "t", "1")
-
-        elif to_type is str:
-            if (isinstance(val, datetime.datetime) or isinstance(val, datetime.date)):
-                result = str(val).strftime(dformat)
-            else:
-                result = str(val)
-        else:
-            result = to_type(val)
-
-        return result
-
-    except (ValueError, TypeError):
-        return default
+from tools.convert import safe_cast
 
 
 class AppConfiguration(object):
     """ configuraton class """
 
     _image = {}
-    _dateformat = '%d.%m.%Y'
-    _datetimeformat = '%d.%m.%Y %H:%M:%S'
 
     #
     #  Application Settings
@@ -76,6 +48,11 @@ class AppConfiguration(object):
     MQTT_TOPIC='#'
     MQTT_SERVICE='TTN'
 
+    #
+    # Configure Datetime formats
+    #
+    DATEFORMAT = '%d.%m.%Y'
+    DATETIMEFORMAT = '%d.%m.%Y %H:%M:%S'
 
     def __init__(self):
         """ constructor """
@@ -106,6 +83,8 @@ class AppConfiguration(object):
         self.DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(self.PATH_LOG, self.DB_NAME))
         
         """ parse self into dictionary """
+
+
 
         for key, value in vars(self).items():
             if not key.startswith('_') and key != '':

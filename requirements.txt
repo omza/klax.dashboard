@@ -10,12 +10,15 @@ greenlet==1.1.2
 h11==0.13.0
 httptools==0.2.0
 idna==3.3
+iso8601==1.0.2
 itsdangerous==2.1.1
 Jinja2==3.0.3
 MarkupSafe==2.1.0
 orjson==3.6.7
+paho-mqtt==1.6.1
 pydantic==1.9.0
 PyMySQL==1.0.2
+python-dateutil==2.8.2
 python-dotenv==0.19.2
 python-multipart==0.0.5
 PyYAML==5.4.1
@@ -32,6 +35,4 @@ uvicorn==0.15.0
 uvloop==0.16.0
 watchgod==0.7
 websockets==10.2
-iso8601==1.0.2
-paho-mqtt==1.6.1
 Werkzeug==2.0.3

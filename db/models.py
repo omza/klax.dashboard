@@ -124,7 +124,7 @@ class Device(Base):
         return result
 
     def lastseen(self) -> str:
-        result = utc2local(self.lastseen_at).strftime(config.DATETIMEFORMAT)
+        result = utc2local(self.lastseen_at, config.TIMEZONE).strftime(config.DATETIMEFORMAT)
         return result
     
     def lorawan(self) -> dict:

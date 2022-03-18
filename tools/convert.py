@@ -1,5 +1,6 @@
 from datetime import datetime, date, timezone
 import time
+import pytz
 
 def safe_cast(val, to_type, default=None, dformat=''):
     try:
@@ -15,7 +16,7 @@ def safe_cast(val, to_type, default=None, dformat=''):
 
         elif to_type is str:
             if (isinstance(val, datetime) or isinstance(val, date)):
-                result = str(val).strftime(dformat)
+                result = str(val.strftime(dformat))
             else:
                 result = str(val)
         else:
@@ -26,7 +27,7 @@ def safe_cast(val, to_type, default=None, dformat=''):
     except (ValueError, TypeError):
         return default
 
-def utc2local(utc) -> datetime:
-    epoch = time.mktime(utc.timetuple())
-    offset = datetime.fromtimestamp(epoch) - datetime.utcfromtimestamp(epoch)
-    return utc + offset
+def utc2local(utc, timezone: str) -> datetime:
+    offset = pytz.timezone(timezone).localize(utc).utcoffset()
+    local = utc + offset
+    return local

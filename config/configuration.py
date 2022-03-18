@@ -19,6 +19,7 @@ class AppConfiguration(object):
     DOCKER_PATH_LOG = ""
     LOG_FILE = "klax.log"
     LOG_LEVEL = 10 #debug
+    TIMEZONE = "Europe/Berlin"
 
     #
     # The Klax Device

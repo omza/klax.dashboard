@@ -1,5 +1,6 @@
 # imports & globals
 from contextlib import nullcontext
+from inspect import Attribute
 from sqlalchemy import Column, Integer, String, Text, Boolean, JSON, Float, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -23,6 +24,7 @@ class User(Base):
     firstname = Column(String(80), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password_hash = Column(String(128))
+    #cookies_check = Column(Boolean, default=False)
 
     def __str__(self):
         return f"id: {self.id}, firstname: {self.firstname}, email: {self.email}"
@@ -47,6 +49,7 @@ class User(Base):
 # Devices
 class Device(Base):
     __tablename__ = 'devices'
+    _ticks = 0
 
     device_id = Column(Integer, primary_key=True)
     device_extern_id = Column(String(40), nullable=False)
@@ -135,6 +138,35 @@ class Device(Base):
             backend['link'] = 'https://www.thethingsnetwork.org/'
         
         return backend
+
+    def availability(self) -> dict:
+        
+        duration = self.lastseen_at - self.inserted_at
+        duration_in_s = duration.total_seconds()
+        hours = divmod(duration_in_s, 3600)[0]
+
+        percent = round(self._ticks/hours * 100, 0)
+
+        if percent >= 90:
+            label = 'success'
+            if percent > 100:
+                percent = 100
+        elif percent > 50:
+            label = 'warning'
+        else:
+            label = 'danger'
+
+        overallavailability = {'percent': percent, 'label': label}
+
+        return overallavailability    
+
+    @property
+    def ticks(self) -> int:
+        return self._ticks
+
+    @ticks.setter
+    def ticks(self, value: int):
+        self._ticks = value
 
 
 # Readings

@@ -2,57 +2,155 @@
 
 {% block title %}
 {{ super() }}
-{% if not title %}Speed-o-Mat{% endif %}
+{% if not title %}MyKlax{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="row">
 
-  <div class="col-lg-6">
+  <div class="col-lg-12">
 
     <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Benutzer</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Klax</h6>
       </div>
       <div class="card-body">
-        <form class="user">
-          <div class="form-group">
-            <input type="email" class="form-control form-control-user"
-              id="eMail" aria-describedby="emailHelp"
-              placeholder="Enter Email Address..." value="{{ current_user.email }}">
-          </div>
 
-          <div class="form-group">
-            <input type="text" class="form-control form-control-user"
-              id="firstname" aria-describedby="emailHelp"
-              placeholder="Enter Firstname..." value="{{ current_user.firstname }}">
-          </div>
-         
-        </form>
+        <p>dev_eui<span class="float-right">{{ device.dev_eui }}</span>      
+
+        <p>Konfiguriert
+          <span class="float-right">
+
+              {% if not device.configured %}
+
+              <a href="#" class="btn btn-warning btn-circle btn-sm">
+                  <i class="fas fa-exclamation"></i>
+              </a>
+
+              {% else %}
+              <a href="#" class="btn btn-success btn-circle btn-sm">
+                  <i class="fas fa-check"></i>
+              </a>                            
+
+              {% endif %}
+          </span>
+        </p>
+
+        <p>Verbindungstest
+          <span class="float-right">
+
+              {% if device.connTest %}
+
+              <a href="#" class="btn btn-warning btn-circle btn-sm">
+                  <i class="fas fa-exclamation"></i>
+              </a>
+
+              {% else %}
+              <a href="#" class="btn btn-success btn-circle btn-sm">
+                  <i class="fas fa-check"></i>
+              </a>                            
+
+              {% endif %}
+          </span>
+        </p>
+
+        <p>deviceType<span class="float-right">{{ device.deviceType }}</span></p>
+        <p>meterType<span class="float-right">{{ device.meterType }}</span></p>         
+        <p>version<span class="float-right">{{ device.version }}</span></p>
+
       </div>
     </div>
-
-  </div>
-
-  <div class="col-lg-6">
 
     <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Avatar</h6>
+        <h6 class="m-0 font-weight-bold text-primary"><a target="_blank" href="{{ device.lorawan()['link'] }}">{{ device.lorawan()['name'] }}</a></h6>
       </div>
       <div class="card-body">
-        <div class="row">
-            <div class="col">
-              <img class="img-profile rounded-circle" src="{{ current_user.avatar(100) }}">
-            </div>
-            <div class="col">
-              <p>Hinterlegen Sie zu Ihrer eMail-Adresse <code>{{ current_user.email }}</code> Ihr Profilbild bei <a target="_blank" href="https://de.gravatar.com/">GRAVATAR</a></p>
-            </div>
-          </div>
+
+        <p>end_device_id<span class="float-right">{{ device.device_extern_id }}</span></p>
+        <p>MQTT Host<span class="float-right">{{ config.MQTT_HOST }}:{{ config.MQTT_PORT }}</span></p>
+        <p>MQTT User<span class="float-right">{{ config.MQTT_USER }}</span></p>
+        <p>MQTT Topic<span class="float-right">{{ device.mqtt_topic }}</span></p>                
+
       </div>
     </div>
+
+    <!-- Basic Card Example -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Register</h6>
+      </div>
+     
+      <div class="card-body">
+
+        <!-- Register 0 -->
+        <p>Register 1
+          <span class="float-right">
+            {{ device.register0_name }}
+          {% if device.register0_Active %}
+              <a href="#" class="btn btn-success btn-circle btn-sm">
+                <i class="fas fa-check"></i>
+              </a>
+          {% else %}        
+              <a href="#" class="btn btn-danger btn-circle btn-sm">
+                  <i class="fas fa-ban"></i>
+              </a>
+          {% endif %}
+          </span>
+        </p>
+
+        <p>Register 2
+          <span class="float-right">
+            {{ device.register1_name }}
+          {% if device.register1_Active %}
+              <a href="#" class="btn btn-success btn-circle btn-sm">
+                <i class="fas fa-check"></i>
+              </a>
+          {% else %}        
+              <a href="#" class="btn btn-danger btn-circle btn-sm">
+                  <i class="fas fa-ban"></i>
+              </a>
+          {% endif %}
+          </span>
+        </p>
+
+        <p>Register 3
+          <span class="float-right">
+            {{ device.register2_name }}
+          {% if device.register2_Active %}
+              <a href="#" class="btn btn-success btn-circle btn-sm">
+                <i class="fas fa-check"></i>
+              </a>
+          {% else %}        
+              <a href="#" class="btn btn-danger btn-circle btn-sm">
+                  <i class="fas fa-ban"></i>
+              </a>
+          {% endif %}
+          </span>
+        </p>  
+
+        <p>Register 4
+          <span class="float-right">
+            {{ device.register3_name }}
+          {% if device.register3_Active %}
+              <a href="#" class="btn btn-success btn-circle btn-sm">
+                <i class="fas fa-check"></i>
+              </a>
+          {% else %}        
+              <a href="#" class="btn btn-danger btn-circle btn-sm">
+                  <i class="fas fa-ban"></i>
+              </a>
+          {% endif %}
+          </span>
+        </p>                  
+
+      </div>
+    </div>    
+
+
+
 
   </div>
 

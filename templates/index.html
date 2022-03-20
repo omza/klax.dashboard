@@ -129,7 +129,7 @@ crossorigin=""/>
             <!-- Card Body -->
             <div class="card-body">
                 <div class="chart-container" style="position: relative; height:30vh;">
-                    <canvas id="myAreaChart"></canvas>
+                    <canvas id="idChartLoadprofile"></canvas>
                 </div>
                 <hr>
                 Lastverlauf der Register im Zeitraum <code>
@@ -187,16 +187,27 @@ crossorigin=""/>
                     <p>LoraWan Backend<span class="float-right"><a target="_blank" href="{{ device.lorawan()['link'] }}">{{ device.lorawan()['name'] }}</a></span>
                     <p>Konfiguriert
                         <span class="float-right">
+
+                            {% if not device.configured %}
+
+                            <a href="#" class="btn btn-warning btn-circle btn-sm">
+                                <i class="fas fa-exclamation"></i>
+                            </a>
+
+                            {% else %}
                             <a href="#" class="btn btn-success btn-circle btn-sm">
                                 <i class="fas fa-check"></i>
-                            </a>
+                            </a>                            
+
+                            {% endif %}
                         </span>
                     </p>
-                    <hr>                    
-                    <p>Verfügbarkeit<span class="float-right">90%</span>
+                    <hr>
+
+                    <p>Verfügbarkeit<span class="float-right">{{ device.availability()['percent'] }}%</span>
                     <div class="progress">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 90%"
-                            aria-valuenow="90" aria-valuemin="0" aria-valuemax="90"></div>
+                        <div class="progress-bar bg-{{ device.availability()['label'] }}" role="progressbar" style="width: {{ device.availability()['percent'] }}%"
+                            aria-valuenow="{{ device.availability()['percent'] }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div></p>
                     <p class="small">Erstellt<span  class="float-right">{{ device.created() }}</span></p>
                     <p class="small">Last Seen<span class="float-right">{{ device.lastseen() }}</span>                    
@@ -226,7 +237,6 @@ crossorigin=""/>
 <!-- Page level custom scripts -->
 <script src="{{ url_for('static', path='/js/chart-functions.js') }}"></script>
 <script src="{{ url_for('static', path='/js/charts-myklax.js') }}"></script>
-<script src="{{ url_for('static', path='/js/demo/chart-area-demo.js') }}"></script>
 
 <script>
     $(document).ready(function () {
@@ -235,6 +245,7 @@ crossorigin=""/>
         fetch("{{ url_for('ChartLoadprofile', period=period) }}")
         .then((response) => response.json()) // Transform the data into json
             .then(function(data) {
+                console.log(data);
                 const ctx = document.getElementById("idChartLoadprofile");
                 const myChart = drawChartLoadprofile(ctx, data);
         })

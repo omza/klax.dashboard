@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import config, logging
 
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 from db import init_db, NewSession
 from db.models import User, Device, Measurement
 
@@ -90,6 +91,11 @@ async def index(request: Request, period: int = 0):
     #retrieve device data
     device =  dbsession.query(Device).first()
 
+    #retrieve count ticks
+    ticks = dbsession.query(Measurement).group_by(Measurement.received_at).count()
+    print(ticks)
+    device.ticks = ticks
+
     # consent management
     cookies_check = True
 
@@ -119,7 +125,6 @@ async def user(request: Request):
             return templates.TemplateResponse("user.html", {"request": request, "current_user": user, "device": device, "title": "Profil", "messages": [], "cookies_check": cookies_check})
 
     except:
-        print("error")
         return templates.TemplateResponse("error.html", {"request": request, "title": "Profil", "messages": []})
 
 
@@ -127,21 +132,24 @@ async def user(request: Request):
 @app.get("/device", response_class=HTMLResponse)
 async def device(request: Request):
 
-    # retrieve user information
-    dbsession = NewSession()
-    user =  dbsession.query(User).first()
+    try:
+        # retrieve user information
+        dbsession = NewSession()
+        user =  dbsession.query(User).first()
 
-    #retrieve device data
-    device =  dbsession.query(Device).first()
+        #retrieve device data
+        device =  dbsession.query(Device).first()
 
-    # consent management
-    cookies_check = True
+        # consent management
+        cookies_check = True
 
-    if not user:
-        return templates.TemplateResponse("error.html", {"request": request, "title": "Klax Device", "messages": []})
-    else:
-        return templates.TemplateResponse("device.html", {"request": request, "current_user": user, "device": device, "title": "Klax Device", "messages": [], "cookies_check": cookies_check})
+        if not user:
+            return templates.TemplateResponse("error.html", {"request": request, "title": "Profil", "messages": []})
+        else:
+            return templates.TemplateResponse("device.html", {"request": request, "current_user": user, "device": device, "title": "Klax Device", "config":config, "messages": [], "cookies_check": cookies_check})
 
+    except:
+        return templates.TemplateResponse("error.html", {"request": request, "title": "Profil", "messages": []})
 
 # ------------------------------------------------------
 @app.get("/ChartLoadprofile/{period}")
@@ -149,13 +157,87 @@ async def ChartLoadprofile(period: int = 0):
 
     base = datetime.utcnow()
     base = base.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+   
+    """
+    metrics = {"labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+              "datasets": [
+                {
+                "label": "1.8.0",
+                "lineTension": 0.3,
+                "backgroundColor": "rgba(78, 115, 223, 0.05)",
+                "borderColor": "rgba(78, 115, 223, 1)",
+                "pointRadius": 3,
+                "pointBackgroundColor": "rgba(78, 115, 223, 1)",
+                "pointBorderColor": "rgba(78, 115, 223, 1)",
+                "pointHoverRadius": 3,
+                "pointHoverBackgroundColor": "rgba(78, 115, 223, 1)",
+                "pointHoverBorderColor": "rgba(78, 115, 223, 1)",
+                "pointHitRadius": 10,
+                "pointBorderWidth": 2,
+                "data": [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000]}, 
+              {
+                "label": "2.8.0",
+                "lineTension": 0.3,
+                "backgroundColor": "rgba(78, 223, 78, 0.05)",
+                "borderColor": "rgba(78, 223, 78, 1)",
+                "pointRadius": 3,
+                "pointBackgroundColor": "rgba(78, 223, 78, 1)",
+                "pointBorderColor": "rgba(78, 223, 78, 1)",
+                "pointHoverRadius": 3,
+                "pointHoverBackgroundColor": "rgba(78, 223, 78, 1)",
+                "pointHoverBorderColor": "rgba(78, 223, 78, 1)",
+                "pointHitRadius": 10,
+                "pointBorderWidth": 2,
+                "data": [0, 5000, 5000, 10000, 20000, 10000, 10000, 20000, 15000, 20000, 15000, 10000]}],
+            }
+            """
+            
+    # Humidity
+    datasets = []
+    dataset = {
+        "label": "1.8.0",
+        "lineTension": 0.3,
+        "backgroundColor": "rgba(78, 115, 223, 0.05)",
+        "borderColor": "rgba(78, 115, 223, 1)",
+        "pointRadius": 3,
+        "pointBackgroundColor": "rgba(78, 115, 223, 1)",
+        "pointBorderColor": "rgba(78, 115, 223, 1)",
+        "pointHoverRadius": 3,
+        "pointHoverBackgroundColor": "rgba(78, 115, 223, 1)",
+        "pointHoverBorderColor": "rgba(78, 115, 223, 1)",
+        "pointHitRadius": 10,
+        "pointBorderWidth": 2,
+        'spanGaps': True,
+        "data": [0, 5000, 5000, 10000, 20000, 10000, 10000, 20000, 15000, 20000, 15000, 10000]
+    }
+    datasets.append(dataset)
+
+    dataset = {
+        "label": "2.8.0",
+        "lineTension": 0.3,
+        "backgroundColor": "rgba(78, 223, 78, 0.05)",
+        "borderColor": "rgba(78, 223, 78, 1)",
+        "pointRadius": 3,
+        "pointBackgroundColor": "rgba(78, 223, 78, 1)",
+        "pointBorderColor": "rgba(78, 223, 78, 1)",
+        "pointHoverRadius": 3,
+        "pointHoverBackgroundColor": "rgba(78, 223, 78, 1)",
+        "pointHoverBorderColor": "rgba(78, 223, 78, 1)",
+        "pointHitRadius": 10,
+        "pointBorderWidth": 2,
+        'spanGaps': True,
+        "data": [0, 5000, 5000, 10000, None, 10000, None, 20000, 15000, None, 15000, 10000]
+    }
+    datasets.append(dataset)
+
+    labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     metrics = {
-        'chart_gas': "10",
-        'chart_pm': "20",
-        'chart_temp': "30",
-        'chart_pres': "40",
-        'chart_hum': "50"
+        "labels": labels,
+        "datasets": datasets
     }
 
-    return json.dumps(metrics)
+
+    
+
+    return metrics

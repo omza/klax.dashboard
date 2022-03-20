@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from pydoc_data.topics import topics
 from db import NewSession
-from db.models import Device, Measurement
+from db.models import Device, Loadprofile, Measurement
 from sqlalchemy import func, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from config import logging, config
@@ -108,7 +108,7 @@ def ttn_klax_parser(topic: str, payload: str):
                         active = register["register"]["filterActive"]
 
                         # iterate all values from register
-                        for index in range(len(register["register"]["values"])):
+                        for index in reversed(range(len(register["register"]["values"]))):
                             
                             value = register["register"]["values"][index]
                             if value["valid"]:
@@ -132,32 +132,62 @@ def ttn_klax_parser(topic: str, payload: str):
                                 dbsession.add(measurement)
                                 dbsession.commit()
 
-                                # last measurement into device
-                                if index == 0:
-                                    
-                                    if register_id == 0:
-                                        device.register0_Active = active
-                                        device.register0_value = measurement.value
-                                        device.register0_unit = unit
-                                        device.register0_status = status
+                            # fill loadprofile
+                            # check out lastload
+                            lastload = dbsession.query(Loadprofile).filter_by(device_id=device.device_id, register_id = register_id).order_by(Loadprofile.start_at.desc()).first()
+                            if not lastload:
+                                lastload = Loadprofile(
+                                    device_id = device.device_id,
+                                    register_id = register_id,
+                                    start_at = received_at + timedelta(minutes=-15*index),
+                                    load = 0,
+                                    meterreading = value["value"],
+                                    unit = unit,
+                                    status = status
+                                )
+                                dbsession.add(lastload)
+                                dbsession.commit()
 
-                                    elif register_id == 1:
-                                        device.register1_Active = active
-                                        device.register1_value = measurement.value
-                                        device.register1_unit = unit
-                                        device.register1_status = status                                                                             
+                            # Checking difference
+                            if measurement.value > lastload.meterreading:
+                                lastload = Loadprofile(
+                                    device_id = device.device_id,
+                                    register_id = register_id,
+                                    start_at = received_at + timedelta(minutes=-15*index),
+                                    load = measurement.value - lastload.meterreading,
+                                    meterreading = measurement.value,
+                                    unit = unit,
+                                    status = status
+                                )
+                                dbsession.add(lastload)
+                                dbsession.commit()                                
 
-                                    elif register_id == 2:
-                                        device.register2_Active = active
-                                        device.register2_value = measurement.value
-                                        device.register2_unit = unit
-                                        device.register2_status = status    
+                            # last measurement into device
+                            if index == 0:
+                                
+                                if register_id == 0:
+                                    device.register0_Active = active
+                                    device.register0_value = measurement.value
+                                    device.register0_unit = unit
+                                    device.register0_status = status
 
-                                    elif register_id == 3:
-                                        device.register3_Active = active
-                                        device.register3_value = measurement.value
-                                        device.register3_unit = unit
-                                        device.register3_status = status                                            
+                                elif register_id == 1:
+                                    device.register1_Active = active
+                                    device.register1_value = measurement.value
+                                    device.register1_unit = unit
+                                    device.register1_status = status                                                                             
+
+                                elif register_id == 2:
+                                    device.register2_Active = active
+                                    device.register2_value = measurement.value
+                                    device.register2_unit = unit
+                                    device.register2_status = status    
+
+                                elif register_id == 3:
+                                    device.register3_Active = active
+                                    device.register3_value = measurement.value
+                                    device.register3_unit = unit
+                                    device.register3_status = status                                            
 
         # close dbsession
         dbsession.close_all()

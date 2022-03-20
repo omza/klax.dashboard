@@ -1,7 +1,7 @@
 # imports & globals
 from datetime import datetime
 from sqlalchemy import create_engine
-from .models import Base, User, Device
+from .models import Base, User, Device, Loadprofile
 from sqlalchemy_utils import create_database, database_exists
 from sqlalchemy.orm import sessionmaker, Session
 from config import config, logging
@@ -35,7 +35,6 @@ def init_db():
 
 
     # Create Device
-
     device =  dbsession.query(Device).first()
     if not device:
 

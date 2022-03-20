@@ -151,4 +151,14 @@ class Measurement(Base):
     status = Column(Integer, nullable=False)
 
 
+class Loadprofile(Base):
+    __tablename__ = 'timeseries'
 
+    device_id = Column(Integer, ForeignKey("devices.device_id"), primary_key=True, autoincrement=False)
+    register_id = Column(Integer, primary_key=True, autoincrement=False)
+    start_at = Column(DateTime, primary_key=True, autoincrement=False) 
+
+    load = Column(Float)
+    meterreading = Column(Float)
+    unit = Column(String(5))
+    status = Column(Integer, nullable=False)

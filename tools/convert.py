@@ -31,3 +31,8 @@ def utc2local(utc, timezone: str) -> datetime:
     offset = pytz.timezone(timezone).localize(utc).utcoffset()
     local = utc + offset
     return local
+
+def local2utc(local, timezone: str) -> datetime:
+    local = pytz.timezone(timezone).localize(local)
+    utc = local.astimezone(pytz.utc)
+    return utc    

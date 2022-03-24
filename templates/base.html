@@ -67,7 +67,12 @@
           <span>Dashboard</span></a>
       </li>
 
-
+      <!-- Nav Item - Api -->
+      <li class="nav-item">
+        <a class="nav-link" href="/docs">
+          <i class="fas fa-fw fa-code"></i>
+          <span>Data Api</span></a>
+      </li>  
 
 {% if current_user.is_authenticated %}
       <!-- Divider -->
@@ -90,19 +95,10 @@
         <a class="nav-link" href="{{ url_for('device') }}">
           <i class="fas fa-fw fa-microchip"></i>
           <span>Klax Device</span></a>
-      </li>
-
-      <!-- Nav Item - Api -->
-      <li class="nav-item">
-        <a class="nav-link" href="/docs">
-          <i class="fas fa-fw fa-code"></i>
-          <span>Data Api</span></a>
-      </li>      
+      </li>    
 
 {% endif %}
 
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
 
       <!-- Sidebar Toggler (Sidebar) -->
       <div class="text-center d-none d-md-inline">

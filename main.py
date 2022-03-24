@@ -61,7 +61,33 @@ client.loop_start()
 logging.info('----------------------------------------------------------')
 logging.info(f'fast api start  ....')
 
-app = FastAPI()
+description = """
+MyKlax API helps you do awesome stuff. 🚀
+
+## Device
+You can read your Device Information and Stats.
+
+## Measurements
+You can read all Measurements.
+"""
+
+
+app = FastAPI(
+    title="MyKlaxApi",
+    description=description,
+    version="0.0.1",
+    terms_of_service="https://github.com/omza/klax.dashboard",
+    contact={
+        "name": "Oliver Meyer",
+        "url": "https://omza.de",
+        "email": "oliver@omza.de",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://github.com/omza/klax.dashboard/blob/main/LICENSE",
+    },    
+    redoc_url=None
+)
 
 # Templating
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -85,7 +111,7 @@ init_db()
 
 
 # routes
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def index(request: Request, period: int = 0):
 
     # retrieve user information
@@ -119,7 +145,7 @@ async def index(request: Request, period: int = 0):
             "messages": []}
             )
 
-@app.get("/profile", response_class=HTMLResponse)
+@app.get("/profile", response_class=HTMLResponse, include_in_schema=False)
 async def user(request: Request):
 
     try:
@@ -143,7 +169,7 @@ async def user(request: Request):
 
 
 
-@app.get("/device", response_class=HTMLResponse)
+@app.get("/device", response_class=HTMLResponse, include_in_schema=False)
 async def device(request: Request):
 
     try:
@@ -166,7 +192,7 @@ async def device(request: Request):
         return templates.TemplateResponse("error.html", {"request": request, "title": "Profil", "messages": []})
 
 # ------------------------------------------------------
-@app.get("/ChartLoadprofile/{period}")
+@app.get("/ChartLoadprofile/{period}", include_in_schema=False)
 async def ChartLoadprofile(period: int = 0):
 
     labels = []
@@ -193,7 +219,8 @@ async def ChartLoadprofile(period: int = 0):
 
         dif = int((end-start).total_seconds()/86400) ## time difference in days
         date_list = [(start + timedelta(days=x)).strftime("%d.%m.%Y") for x in range(dif+1)]
-        date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(days=x)).strftime("%Y%m%d") for x in range(dif+1)]
+        #date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(days=x)).strftime("%Y%m%d") for x in range(dif+1)]
+        date_list_utc = date_list
         labels = date_list
 
     elif period == 3:
@@ -204,7 +231,7 @@ async def ChartLoadprofile(period: int = 0):
 
         dif = 11
         date_list = [(start + relativedelta(months=x)).strftime("%b %Y") for x in range(dif+1)]
-        date_list_utc = [(local2utc(start, config.TIMEZONE) + relativedelta(months=x)).strftime("%Y%m") for x in range(dif+1)]
+        date_list_utc = [(start + relativedelta(months=x)).strftime("%Y%m") for x in range(dif+1)]
 
         labels = date_list
 
@@ -246,7 +273,7 @@ async def ChartLoadprofile(period: int = 0):
 
             if period == 2:
                 # days
-                sql = f"select strftime('%Y%m%d',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
             elif period == 3:
                 # Month
                 sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
@@ -271,31 +298,22 @@ async def ChartLoadprofile(period: int = 0):
                 # Register
                 dataset = {
                     "label": device.register0_name,
-                    "lineTension": 0.3,
-                    "backgroundColor": "rgba(" + rgb + ",0.05)",
-                    "borderColor": "rgba(" + rgb + ", 1)",
-                    "pointRadius": 3,
-                    "pointBackgroundColor": "rgba(" + rgb + ", 1)",
-                    "pointBorderColor": "rgba(" + rgb + ", 1)",
-                    "pointHoverRadius": 3,
-                    "pointHoverBackgroundColor": "rgba(" + rgb + ", 1)",
-                    "pointHoverBorderColor": "rgba(" + rgb + ", 1)",        
-                    "pointHitRadius": 10,
-                    "pointBorderWidth": 2,
-                    'spanGaps': True,
+                    "backgroundColor": "rgba(" + rgb + ", 1)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "borderColor": "rgba(" + rgb + ", 1)",                    
                     "data": register_data
                 }
                 datasets.append(dataset)
 
         # Register 1
         if device.register1_Active:
-            rgb = "78, 78, 233"
+            rgb = "78, 78, 223"
             register_id = 1
             register_data = []
 
             if period == 2:
                 # days
-                sql = f"select strftime('%Y%m%d',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
             elif period == 3:
                 # Month
                 sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
@@ -320,21 +338,94 @@ async def ChartLoadprofile(period: int = 0):
                 # Register
                 dataset = {
                     "label": device.register1_name,
-                    "lineTension": 0.3,
-                    "backgroundColor": "rgba(" + rgb + ",0.05)",
-                    "borderColor": "rgba(" + rgb + ", 1)",
-                    "pointRadius": 3,
-                    "pointBackgroundColor": "rgba(" + rgb + ", 1)",
-                    "pointBorderColor": "rgba(" + rgb + ", 1)",
-                    "pointHoverRadius": 3,
-                    "pointHoverBackgroundColor": "rgba(" + rgb + ", 1)",
-                    "pointHoverBorderColor": "rgba(" + rgb + ", 1)",        
-                    "pointHitRadius": 10,
-                    "pointBorderWidth": 2,
-                    'spanGaps': True,
+                    "backgroundColor": "rgba(" + rgb + ", 1)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "borderColor": "rgba(" + rgb + ", 1)",                   
                     "data": register_data
                 }
                 datasets.append(dataset)
+
+        # Register 2
+        if device.register2_Active:
+            rgb = "78, 78, 223"
+            register_id = 2
+            register_data = []
+
+            if period == 2:
+                # days
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            elif period == 3:
+                # Month
+                sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            else:
+                # Hours
+                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"
+            logging.debug(sql)
+
+            resultset = [dict(row) for row in dbsession.execute(sql)]
+
+            if resultset:
+                for label in date_list_utc:
+
+                    row = list(filter(lambda item: item['label'] == label, resultset))
+                    if row:
+                        row = dict(row[0])
+                        register_data.append(row['load'])
+
+                    else:
+                        register_data.append(None)
+
+                # Register
+                dataset = {
+                    "label": device.register2_name,
+                    "backgroundColor": "rgba(" + rgb + ", 1)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "borderColor": "rgba(" + rgb + ", 1)",                   
+                    "data": register_data
+                }
+                datasets.append(dataset)
+
+        # Register 3
+        if device.register3_Active:
+            rgb = "78, 78, 223"
+            register_id = 3
+            register_data = []
+
+            if period == 2:
+                # days
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            elif period == 3:
+                # Month
+                sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            else:
+                # Hours
+                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"
+            logging.debug(sql)
+
+            resultset = [dict(row) for row in dbsession.execute(sql)]
+            if resultset:
+                for label in date_list_utc:
+
+                    row = list(filter(lambda item: item['label'] == label, resultset))
+                    if row:
+                        row = dict(row[0])
+                        register_data.append(row['load'])
+
+                    else:
+                        register_data.append(None)
+
+                # Register
+                dataset = {
+                    "label": device.register3_name,
+                    "backgroundColor": "rgba(" + rgb + ", 1)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "borderColor": "rgba(" + rgb + ", 1)",                   
+                    "data": register_data
+                }
+                datasets.append(dataset)
+
+
+
 
     else:
 
@@ -343,18 +434,9 @@ async def ChartLoadprofile(period: int = 0):
 
         dataset = {
             "label": "no Klax",
-            "lineTension": 0.3,
-            "backgroundColor": "rgba(78, 223, 78, 0.05)",
-            "borderColor": "rgba(78, 223, 78, 1)",
-            "pointRadius": 3,
-            "pointBackgroundColor": "rgba(78, 223, 78, 1)",
-            "pointBorderColor": "rgba(78, 223, 78, 1)",
-            "pointHoverRadius": 3,
-            "pointHoverBackgroundColor": "rgba(78, 223, 78, 1)",
-            "pointHoverBorderColor": "rgba(78, 223, 78, 1)",        
-            "pointHitRadius": 10,
-            "pointBorderWidth": 2,
-            'spanGaps': True,
+            "backgroundColor": "rgba(78, 78, 223, 1)",
+            "hoverBackgroundColor": "rgba(78, 78, 223, 0.5)",
+            "borderColor": "rgba(78, 78, 223, 1)",                   
             "data": register_data
         }
         datasets.append(dataset)
@@ -367,3 +449,29 @@ async def ChartLoadprofile(period: int = 0):
     }
 
     return timeseries
+
+
+@app.get("/api/device")
+async def read_device():
+
+    # retrieve user information
+    dbsession = NewSession()
+
+    #retrieve device data
+    device =  dbsession.query(Device).first()
+
+    return device
+
+@app.get("/api/measurements")
+async def read_measurements(register_id: int = -1, date_from: date = datetime.utcnow()-timedelta(days=1), date_to: date = datetime.utcnow()):
+
+    # retrieve user information
+    dbsession = NewSession()
+
+    #retrieve device data
+    device =  dbsession.query(Device).first()
+
+    # retrieve measurements
+    measurements = dbsession.query(Measurement).filter(Measurement.device_id == device.device_id).all()
+
+    return measurements

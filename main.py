@@ -463,7 +463,7 @@ async def read_device():
     return device
 
 @app.get("/api/measurements")
-async def read_measurements(register_id: int = -1, date_from: date = datetime.utcnow()-timedelta(days=1), date_to: date = datetime.utcnow()):
+async def read_measurements(register_id: int = -1, date_from: date = date.today()-timedelta(days=1), date_to: date = date.today()):
 
     # retrieve user information
     dbsession = NewSession()
@@ -472,6 +472,9 @@ async def read_measurements(register_id: int = -1, date_from: date = datetime.ut
     device =  dbsession.query(Device).first()
 
     # retrieve measurements
-    measurements = dbsession.query(Measurement).filter(Measurement.device_id == device.device_id).all()
+    if register_id > 0:
+        measurements = dbsession.query(Measurement).filter(Measurement.received_at >= date_from).filter(Measurement.received_at <= date_to).filter(Measurement.device_id == device.device_id).order_by(Measurement.received_at.desc()).all()
+    else:
+        measurements = dbsession.query(Measurement).filter(Measurement.received_at >= date_from).filter(Measurement.received_at <= date_to).order_by(Measurement.received_at.desc(), Measurement.register_id).all()
 
     return measurements

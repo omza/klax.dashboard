@@ -106,6 +106,7 @@ def ttn_klax_parser(topic: str, payload: str):
                         register_id = register["register"]["filterId"]
                         unit = register["register"]["unit"]
                         active = register["register"]["filterActive"]
+                        measurement = None
 
                         # iterate all values from register
                         for index in reversed(range(len(register["register"]["values"]))):
@@ -162,32 +163,35 @@ def ttn_klax_parser(topic: str, payload: str):
                                 dbsession.add(lastload)
                                 dbsession.commit()                                
 
-                            # last measurement into device
-                            if index == 0:
-                                
-                                if register_id == 0:
-                                    device.register0_Active = active
-                                    device.register0_value = measurement.value
-                                    device.register0_unit = unit
-                                    device.register0_status = status
+                        # put last measurement in device
+                        if measurement:
 
-                                elif register_id == 1:
-                                    device.register1_Active = active
-                                    device.register1_value = measurement.value
-                                    device.register1_unit = unit
-                                    device.register1_status = status                                                                             
+                            if register_id == 0:
+                                device.register0_Active = active
+                                device.register0_value = measurement.value
+                                device.register0_unit = unit
+                                device.register0_status = measurement.status 
 
-                                elif register_id == 2:
-                                    device.register2_Active = active
-                                    device.register2_value = measurement.value
-                                    device.register2_unit = unit
-                                    device.register2_status = status    
+                            elif register_id == 1:
+                                device.register1_Active = active
+                                device.register1_value = measurement.value
+                                device.register1_unit = unit
+                                device.register1_status = measurement.status                                                                              
 
-                                elif register_id == 3:
-                                    device.register3_Active = active
-                                    device.register3_value = measurement.value
-                                    device.register3_unit = unit
-                                    device.register3_status = status                                            
+                            elif register_id == 2:
+                                device.register2_Active = active
+                                device.register2_value = measurement.value
+                                device.register2_unit = unit
+                                device.register2_status = measurement.status     
+
+                            elif register_id == 3:
+                                device.register3_Active = active
+                                device.register3_value = measurement.value
+                                device.register3_unit = unit
+                                device.register3_status = measurement.status                                            
+
+                            dbsession.commit()
+
 
         # close dbsession
         dbsession.close_all()

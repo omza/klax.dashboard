@@ -73,7 +73,7 @@ You can read all Measurements.
 
 
 app = FastAPI(
-    title="MyKlaxApi",
+    title="MyKlax Api",
     description=description,
     version="0.0.1",
     terms_of_service="https://github.com/omza/klax.dashboard",
@@ -133,13 +133,13 @@ async def index(request: Request, period: int = 0):
 
 
     if not user or not device:
-        return templates.TemplateResponse("error.html", {"request": request, "title": "klax dashboard", "messages": []})
+        return templates.TemplateResponse("error.html", {"request": request, "title": "Dashboard", "messages": []})
     else:
         return templates.TemplateResponse("index.html", {"request": request, 
             "current_user": user, 
             "device": device, 
             "cookies_check": cookies_check, 
-            "title": "Klax Dashboard", 
+            "title": "Dashboard", 
             "period": period, 
             "daybefore": daybefore, 
             "messages": []}
@@ -468,12 +468,11 @@ async def read_measurements(register_id: int = -1, date_from: date = date.today(
     # retrieve user information
     dbsession = NewSession()
 
-    #retrieve device data
-    device =  dbsession.query(Device).first()
+    date_to = date_to + timedelta(days=1)
 
     # retrieve measurements
-    if register_id > 0:
-        measurements = dbsession.query(Measurement).filter(Measurement.received_at >= date_from).filter(Measurement.received_at <= date_to).filter(Measurement.device_id == device.device_id).order_by(Measurement.received_at.desc()).all()
+    if register_id >= 0:
+        measurements = dbsession.query(Measurement).filter(Measurement.received_at >= date_from).filter(Measurement.received_at <= date_to).filter(Measurement.register_id == register_id).order_by(Measurement.received_at.desc()).all()
     else:
         measurements = dbsession.query(Measurement).filter(Measurement.received_at >= date_from).filter(Measurement.received_at <= date_to).order_by(Measurement.received_at.desc(), Measurement.register_id).all()
 

@@ -12,19 +12,15 @@
   <meta property="og:title" content="MyKlax: Deine Klax 2.0 Daten auf einen Blick" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{ url_for('index') }}" />
-  <meta property="og:image" content="{{ url_for('static', path='/img/AOT-ENGIE-DEMO-QQ.png') }}" />
+  <meta property="og:image" content="{{ url_for('static', path='/img/MyKlaxOg.png') }}" />
   <meta property="og:locale" content="de_DE" />
 
-  <link rel="icon" type="image/jpg" href="{{ url_for('static', path='/img/favicon.ico') }}">
+  <link rel="icon" type="image/svg" href="{{ url_for('static', path='/img/plug-circle-bolt-solid.svg') }}">
 
-  <title>
-  {% if title %}{{ title }}{% endif %}
-  {% block title %}
-  {% endblock %}
-  </title>
+  <title>MyKlax</title>
 
   <!-- Custom fonts for this template-->
-  <link href="{{ url_for('static', path='/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+  <script src="https://kit.fontawesome.com/910595205a.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template-->
@@ -52,7 +48,7 @@
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('index') }}">
         <div class="sidebar-brand-icon rotate-15">
-          <i class="fas fa-satellite-dish"></i>
+          <i class="fas fa-fw fa-plug-circle-bolt"></i>
         </div>
         <div class="sidebar-brand-text mx-3">MyKlax</div>
       </a>

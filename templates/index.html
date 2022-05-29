@@ -120,10 +120,10 @@ crossorigin=""/>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                         aria-labelledby="dropdownMenuLink">
                         <div class="dropdown-header">Zeitraum:</div>
-                        <a class="dropdown-item" href="{{ url_for('index') }}?period=0">Vortag</a>
+                        <a class="dropdown-item" href="{{ url_for('index') }}?period=0">letzte 30 Tage (Monat)</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('index') }}?period=1">letzte 24 Stunden (Tag)</a>
-                        <a class="dropdown-item" href="{{ url_for('index') }}?period=2">letzte 30 Tage (Monat)</a>
+                        <a class="dropdown-item" href="{{ url_for('index') }}?period=1">Vortag</a>
+                        <a class="dropdown-item" href="{{ url_for('index') }}?period=2">letzte 24 Stunden (Tag)</a>
                         <a class="dropdown-item" href="{{ url_for('index') }}?period=3">letzte 12 Monate (Jahr)</a>
                     </div>
                 </div>
@@ -136,13 +136,14 @@ crossorigin=""/>
                 <hr>
                 Lastverlauf der Register 
                     {% if period == 1 %}
-                        für die <code>letzten 24 Stunden (Tag)
+                        für den <code>{{ daybefore }}
                     {% elif period == 2 %}
-                        für die <code>letzten 30 Tage (Monat)
+                        für die <code>letzten 24 Stunden (Tag)
                     {% elif period == 3 %}
                         für die <code>letzten 12 Monate (Jahr)                       
                     {% else %}
-                        für den <code>{{ daybefore }}
+                        für die <code>letzten 30 Tage (Monat)
+                        
                     {% endif %}
                 </code>.
             </div>
@@ -251,7 +252,7 @@ crossorigin=""/>
             .then(function(data) {
                 console.log(data);
                 const ctx = document.getElementById("idChartLoadprofile");
-                const myChart = drawBarChartLoadprofile(ctx, data);
+                const myChart = drawBarChartLoadprofile(ctx, data.type, data.timeseries);
         })
     });
 </script>

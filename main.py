@@ -198,8 +198,23 @@ async def ChartLoadprofile(period: int = 0):
     labels = []
     datasets = []
     register_data = []
+    charttype = "bar"
 
     if period == 1:
+        # Day Before
+    
+        start = utc2local(datetime.utcnow(), config.TIMEZONE) - timedelta(days=1)
+        start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = start.replace(hour=23, minute=59, second=0, microsecond=0)
+
+        dif = int((end-start).total_seconds()/3600) ## time difference in hours
+        date_list = [(start + timedelta(hours=x)).strftime("%H:%M") for x in range(dif+1)]
+
+        labels = date_list
+        date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(hours=x)).strftime("%Y%m%d%H") for x in range(dif+1)]
+    
+
+    elif period == 2:
         # last 24 hours
         start = utc2local(datetime.utcnow(), config.TIMEZONE) - timedelta(hours=24)
         start = start.replace(minute=0, second=0, microsecond=0)
@@ -209,18 +224,6 @@ async def ChartLoadprofile(period: int = 0):
         date_list = [(start + timedelta(hours=x)).strftime("%d.%m.%Y %H:%M") for x in range(dif+1)]
         date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(hours=x)).strftime("%Y%m%d%H") for x in range(dif+1)]
 
-        labels = date_list
-
-    elif period == 2:
-        # last 30 Days
-        start = utc2local(datetime.utcnow(), config.TIMEZONE) - timedelta(days=30)
-        start = start.replace(hour=0, minute=0, second=0, microsecond=0)
-        end = utc2local(datetime.utcnow(), config.TIMEZONE).replace(hour=0, minute=59, second=0, microsecond=0)
-
-        dif = int((end-start).total_seconds()/86400) ## time difference in days
-        date_list = [(start + timedelta(days=x)).strftime("%d.%m.%Y") for x in range(dif+1)]
-        #date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(days=x)).strftime("%Y%m%d") for x in range(dif+1)]
-        date_list_utc = date_list
         labels = date_list
 
     elif period == 3:
@@ -237,18 +240,17 @@ async def ChartLoadprofile(period: int = 0):
 
 
     else:
-        # Day Before
-    
-        start = utc2local(datetime.utcnow(), config.TIMEZONE) - timedelta(days=1)
+        # last 30 Days
+        charttype = "line"
+        start = utc2local(datetime.utcnow(), config.TIMEZONE) - timedelta(days=30)
         start = start.replace(hour=0, minute=0, second=0, microsecond=0)
-        end = start.replace(hour=23, minute=59, second=0, microsecond=0)
+        end = utc2local(datetime.utcnow(), config.TIMEZONE).replace(hour=0, minute=59, second=0, microsecond=0)
 
-        dif = int((end-start).total_seconds()/3600) ## time difference in hours
-        date_list = [(start + timedelta(hours=x)).strftime("%H:%M") for x in range(dif+1)]
-
+        dif = int((end-start).total_seconds()/86400) ## time difference in days
+        date_list = [(start + timedelta(days=x)).strftime("%d.%m.%Y") for x in range(dif+1)]
+        #date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(days=x)).strftime("%Y%m%d") for x in range(dif+1)]
+        date_list_utc = date_list
         labels = date_list
-        date_list_utc = [(local2utc(start, config.TIMEZONE) + timedelta(hours=x)).strftime("%Y%m%d%H") for x in range(dif+1)]
-    
 
 
     """
@@ -448,7 +450,14 @@ async def ChartLoadprofile(period: int = 0):
         "datasets": datasets
     }
 
-    return timeseries
+    # Return Timeseries and charttype (bar or line)
+    chartdata = {
+        "type": charttype,
+        "timeseries": timeseries
+    }
+
+
+    return chartdata
 
 
 @app.get("/api/device")

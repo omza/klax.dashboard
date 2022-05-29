@@ -76,10 +76,10 @@ function drawChartLoadprofile(canvas, chartdata) {
     return chart;
 }
 
-function drawBarChartLoadprofile(canvas, chartdata) {
+function drawBarChartLoadprofile(canvas, charttype, chartdata) {
 
-var myBarChart = new Chart(canvas, {
-    type: 'bar',
+  var myBarChart = new Chart(canvas, {
+    type: charttype,
     data: chartdata,
     options: {
       maintainAspectRatio: false,

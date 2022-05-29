@@ -55,6 +55,11 @@ class AppConfiguration(object):
     DATEFORMAT = '%d.%m.%Y'
     DATETIMEFORMAT = '%d.%m.%Y %H:%M:%S'
 
+    #
+    # fastapi-login configuration
+    #
+    SECRET = 'super-secret-key'
+
     def __init__(self):
         """ constructor """
 

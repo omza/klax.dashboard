@@ -4,6 +4,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
+# Login
+from fastapi_login import LoginManager
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_login.exceptions import InvalidCredentialsException
+
+
 
 from config import config, logging
 
@@ -105,6 +112,35 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Login
+manager = LoginManager(config.SECRET, '/login')
+
+@manager.user_loader()
+def query_user():
+    
+    # retrieve user information
+    dbsession = NewSession()
+    user =  dbsession.query(User).first() 
+
+    return user
+
+@app.post('/login')
+def login(data: OAuth2PasswordRequestForm = Depends()):
+    email = data.username
+    password = data.password
+
+    user = query_user()
+    if not user:
+        # you can return any response or error of your choice
+        raise InvalidCredentialsException
+    
+    elif not user.check_password:
+        raise InvalidCredentialsException
+
+    return {'status': 'Success'}
+
 
 # initialize db 
 init_db()
@@ -301,10 +337,10 @@ async def ChartLoadprofile(period: int = 0):
 
                 # Register
                 dataset = {
-                    "label": device.register0_name,
-                    "backgroundColor": "rgba(" + rgb + ", 1)",
-                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
-                    "borderColor": "rgba(" + rgb + ", 1)",                    
+                    "label": device.register1_name,
+                    "backgroundColor": "rgba(" + rgb + ", 0.5)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
+                    "borderColor": "rgba(" + rgb + ", 1)",                   
                     "data": register_data
                 }
                 datasets.append(dataset)
@@ -344,8 +380,8 @@ async def ChartLoadprofile(period: int = 0):
                 # Register
                 dataset = {
                     "label": device.register1_name,
-                    "backgroundColor": "rgba(" + rgb + ", 1)",
-                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "backgroundColor": "rgba(" + rgb + ", 0.5)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
                     "borderColor": "rgba(" + rgb + ", 1)",                   
                     "data": register_data
                 }
@@ -385,9 +421,9 @@ async def ChartLoadprofile(period: int = 0):
 
                 # Register
                 dataset = {
-                    "label": device.register2_name,
-                    "backgroundColor": "rgba(" + rgb + ", 1)",
-                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "label": device.register1_name,
+                    "backgroundColor": "rgba(" + rgb + ", 0.5)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
                     "borderColor": "rgba(" + rgb + ", 1)",                   
                     "data": register_data
                 }
@@ -426,9 +462,9 @@ async def ChartLoadprofile(period: int = 0):
 
                 # Register
                 dataset = {
-                    "label": device.register3_name,
-                    "backgroundColor": "rgba(" + rgb + ", 1)",
-                    "hoverBackgroundColor": "rgba(" + rgb + ",0.5)",
+                    "label": device.register1_name,
+                    "backgroundColor": "rgba(" + rgb + ", 0.5)",
+                    "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
                     "borderColor": "rgba(" + rgb + ", 1)",                   
                     "data": register_data
                 }
@@ -444,8 +480,8 @@ async def ChartLoadprofile(period: int = 0):
 
         dataset = {
             "label": "no Klax",
-            "backgroundColor": "rgba(78, 78, 223, 1)",
-            "hoverBackgroundColor": "rgba(78, 78, 223, 0.5)",
+            "backgroundColor": "rgba(78, 78, 223, 0.5)",
+            "hoverBackgroundColor": "rgba(78, 78, 223, 0.3)",
             "borderColor": "rgba(78, 78, 223, 1)",                   
             "data": register_data
         }

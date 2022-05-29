@@ -273,15 +273,17 @@ async def ChartLoadprofile(period: int = 0):
             register_id = 0
             register_data = []
 
-            if period == 2:
-                # days
-                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            if 1 <= period <= 2:
+                # Hours
+                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+               
             elif period == 3:
                 # Month
                 sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
             else:
-                # Hours
-                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"
+                # days
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label" 
+
             logging.debug(sql)
 
             resultset = [dict(row) for row in dbsession.execute(sql)]
@@ -313,15 +315,17 @@ async def ChartLoadprofile(period: int = 0):
             register_id = 1
             register_data = []
 
-            if period == 2:
-                # days
-                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            if 1 <= period <= 2:
+                # Hours
+                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+               
             elif period == 3:
                 # Month
                 sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
             else:
-                # Hours
-                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"
+                # days
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label" 
+                
             logging.debug(sql)
 
             resultset = [dict(row) for row in dbsession.execute(sql)]
@@ -353,15 +357,17 @@ async def ChartLoadprofile(period: int = 0):
             register_id = 2
             register_data = []
 
-            if period == 2:
-                # days
-                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            if 1 <= period <= 2:
+                # Hours
+                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+               
             elif period == 3:
                 # Month
                 sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
             else:
-                # Hours
-                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"
+                # days
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label" 
+                
             logging.debug(sql)
 
             resultset = [dict(row) for row in dbsession.execute(sql)]
@@ -393,15 +399,17 @@ async def ChartLoadprofile(period: int = 0):
             register_id = 3
             register_data = []
 
-            if period == 2:
-                # days
-                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+            if 1 <= period <= 2:
+                # Hours
+                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
+               
             elif period == 3:
                 # Month
                 sql = f"select strftime('%Y%m',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"                
             else:
-                # Hours
-                sql = f"select strftime('%Y%m%d%H',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label"
+                # days
+                sql = f"select strftime('%d.%m.%Y',start_at) label, sum(load) load from timeseries where device_id = {device.device_id} and register_id = {register_id} and date(start_at) >= '{start.strftime('%Y-%m-%d')}' group by device_id, register_id, label" 
+                
             logging.debug(sql)
 
             resultset = [dict(row) for row in dbsession.execute(sql)]

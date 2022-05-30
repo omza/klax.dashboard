@@ -126,7 +126,7 @@ def query_user():
 
     return user
 
-@app.post('/login')
+@app.post('/login', include_in_schema=False)
 def login(data: OAuth2PasswordRequestForm = Depends()):
     email = data.username
     password = data.password

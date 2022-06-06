@@ -9,6 +9,7 @@ from fastapi_login import LoginManager
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login.exceptions import InvalidCredentialsException
+from requests import Response
 
 
 
@@ -115,10 +116,13 @@ app.add_middleware(
 
 
 # Login
-manager = LoginManager(config.SECRET, '/login')
+manager = LoginManager(config.SECRET, 
+                        '/login',
+                        use_cookie=True,
+                        cookie_name='myklax_token')
 
 @manager.user_loader()
-def query_user():
+def query_user(user_id:str = ""):
     
     # retrieve user information
     dbsession = NewSession()
@@ -126,7 +130,7 @@ def query_user():
 
     return user
 
-@app.post('/login', include_in_schema=False)
+@app.post('/login')
 def login(data: OAuth2PasswordRequestForm = Depends()):
     email = data.username
     password = data.password
@@ -136,10 +140,16 @@ def login(data: OAuth2PasswordRequestForm = Depends()):
         # you can return any response or error of your choice
         raise InvalidCredentialsException
     
-    elif not user.check_password:
+    elif not user.check_password(password):
         raise InvalidCredentialsException
 
-    return {'status': 'Success'}
+    access_token = manager.create_access_token(
+    data={'sub': email}
+    )
+
+    #manager.set_cookie(data, token)
+
+    return {'access_token': access_token}
 
 
 # initialize db 
@@ -337,7 +347,7 @@ async def ChartLoadprofile(period: int = 0):
 
                 # Register
                 dataset = {
-                    "label": device.register1_name,
+                    "label": device.register0_name,
                     "backgroundColor": "rgba(" + rgb + ", 0.5)",
                     "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
                     "borderColor": "rgba(" + rgb + ", 1)",                   
@@ -421,7 +431,7 @@ async def ChartLoadprofile(period: int = 0):
 
                 # Register
                 dataset = {
-                    "label": device.register1_name,
+                    "label": device.register2_name,
                     "backgroundColor": "rgba(" + rgb + ", 0.5)",
                     "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
                     "borderColor": "rgba(" + rgb + ", 1)",                   
@@ -462,7 +472,7 @@ async def ChartLoadprofile(period: int = 0):
 
                 # Register
                 dataset = {
-                    "label": device.register1_name,
+                    "label": device.register3_name,
                     "backgroundColor": "rgba(" + rgb + ", 0.5)",
                     "hoverBackgroundColor": "rgba(" + rgb + ",0.3)",
                     "borderColor": "rgba(" + rgb + ", 1)",                   
@@ -505,7 +515,7 @@ async def ChartLoadprofile(period: int = 0):
 
 
 @app.get("/api/device")
-async def read_device():
+async def read_device(user=Depends(manager)):
 
     # retrieve user information
     dbsession = NewSession()
@@ -516,7 +526,7 @@ async def read_device():
     return device
 
 @app.get("/api/measurements")
-async def read_measurements(register_id: int = -1, date_from: date = date.today()-timedelta(days=1), date_to: date = date.today()):
+async def read_measurements(user=Depends(manager), register_id: int = -1, date_from: date = date.today()-timedelta(days=1), date_to: date = date.today()):
 
     # retrieve user information
     dbsession = NewSession()
